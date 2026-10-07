@@ -1,0 +1,25 @@
+{
+  "name": "qa-mesh-next",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit",
+    "plugin:build": "node kernel/dist/cli.js plugin build",
+    "plugin:check": "node kernel/dist/cli.js plugin build --check"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Plateforme QA multi-agents Playwright (qa-mesh) enrichie des patterns tester-army/e2e",
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "@types/node": "^25.9.3",
+    "typescript": "^5.9.3",
+    "zod": "^4.4.3"
+  },
+  "private": true
+}

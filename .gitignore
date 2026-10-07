@@ -1,0 +1,73 @@
+# Dépôts de référence (lecture seule, jamais commités)
+_refs/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+.playwright-mcp/
+
+# Test artifacts
+screenshots/
+videos/
+traces/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+
+# Coverage
+coverage/
+.nyc_output/
+
+# QA platform
+.qa/agentdb/sessions/
+.qa/runs/
+.auth/
+# AgentDB v2 — base SQLite locale (l'export JSON `db export` reste versionnable)
+.qa/agentdb/*.sqlite
+.qa/agentdb/*.sqlite-wal
+.qa/agentdb/*.sqlite-shm
+
+# Loops autonomes (v3) — artefacts de run (rapports, traces, historique régénéré) ;
+# loop.yaml/TASK.md/LOOP_INSTRUCTIONS.md versionnés (définition durable du loop)
+loops/*/outputs/*
+!loops/*/outputs/.gitkeep
+loops/*/PROGRESS.md
+
+# Kernel — sortie de compilation des tests
+kernel/dist-test/
+
+# Claude — perso (non committé)
+CLAUDE.local.md
+.claude/settings.local.json
+
+# Événements des hooks (observabilité locale, C10)
+.qa/events/

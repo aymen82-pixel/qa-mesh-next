@@ -8,6 +8,7 @@ import { runCompile } from "./commands/compile";
 import { runCoverage } from "./commands/coverage";
 import { runLoop } from "./commands/loop";
 import { runPlugin } from "./commands/plugin";
+import { runConfigCheck } from "./commands/config";
 
 const VERSION = "2.0.0-alpha.1";
 
@@ -60,6 +61,9 @@ Usage :
   qa-mesh loop decide --loop <id> --run <run_id> [--max-iterations <n>] [--json]
   qa-mesh loop status [--loop <id>] [--run <run_id>] [--json]
       Loops autonomes (v3) : verdict et décision déterministes, PROGRESS.md généré.
+
+  qa-mesh config check [fichier] [--json]
+      Valide .qa/qa.config.json (ou le fichier donné) contre qa-config.schema.json.
 
   qa-mesh plugin build [--check] [--json]
       Génère qa-mesh-plugin/ depuis les sources uniques (manifeste, .claude/, kernel/, .qa/).
@@ -272,6 +276,15 @@ function main(argv: string[]): number {
           bools: args.bools,
           qaDir,
         });
+        process.stdout.write(outcome.stdout + "\n");
+        return outcome.exitCode;
+      }
+      case "config": {
+        if (args.positionals[0] !== "check") {
+          process.stderr.write("config : sous-commande inconnue (check)\n");
+          return 2;
+        }
+        const outcome = runConfigCheck({ file: args.positionals[1], json: args.bools.has("json"), qaDir });
         process.stdout.write(outcome.stdout + "\n");
         return outcome.exitCode;
       }

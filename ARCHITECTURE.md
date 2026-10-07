@@ -151,6 +151,12 @@ Tous dans `.qa/contracts/` :
   `NOM|ALT|ERR|LIMITE`, échecs `PRODUIT|SCRIPT|ENV`)
 - `agent-0.schema.json` … `agent-6.schema.json` — payloads par agent
 
+- `qa-config.schema.json` — configuration projet `.qa/qa.config.json`
+  (`qa-mesh config check`)
+- `fixtures/<nom>.valid.json` + `<nom>.invalid.json` — une paire par schéma,
+  vérifiée par le kernel ; tout changement de contrat touche schéma, fixtures et
+  producteur dans le même commit (voir `AGENTS.md`)
+
 Règle de validation : le QA Analyst valide chaque livrable avant transmission
 (JSON valide, non vide, champs requis, schéma). Invalide → relance avec motif
 précis, max 2, puis STOP avec `status: error` dans `pipeline.log`.

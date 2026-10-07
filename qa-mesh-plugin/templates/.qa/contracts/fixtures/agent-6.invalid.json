@@ -1,0 +1,38 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-6",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "fixes": [
+      {
+        "spec": "tests/todo/todo.ajout.spec.ts",
+        "title": "TC-002: saisie vide",
+        "root_cause": "selector",
+        "change": "getByText remplacé par getByRole('button')",
+        "attempts": 4,
+        "final_status": "OK",
+        "selector_updated": {
+          "page": "/todos",
+          "label": "Effacer",
+          "old": "getByText('Clear')",
+          "new": "getByRole('button',{name:'Clear completed'})"
+        }
+      }
+    ],
+    "requalified_bugs": [],
+    "unresolved": [],
+    "selectors_updated": 1
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  },
+  "_expect_error": {
+    "layer": "payload",
+    "path": "/fixes/0/attempts"
+  }
+}

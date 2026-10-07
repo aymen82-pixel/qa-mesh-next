@@ -196,6 +196,22 @@ node kernel/dist/cli.js loop status [--loop demo] [--run <run_id>] [--json]
 - Gabarit fonctionnel : `loops/demo-regression/` (sur la suite de tests de ce
   repo) — copier le dossier, adapter `loop.yaml`, pour un nouveau loop.
 
+### `config check` — conformité de `.qa/qa.config.json`
+
+```bash
+node kernel/dist/cli.js config check [fichier] [--json]   # défaut : .qa/qa.config.json
+```
+
+Valide la config contre `.qa/contracts/qa-config.schema.json` (clés inconnues
+refusées, noms de variables d'environnement au format `NOM_VAR`, jamais de
+valeur de secret). Exit 0 conforme, 1 non conforme, 2 fichier absent/illisible.
+
+### Fixtures de contrats
+
+Chaque schéma de `.qa/contracts/` a une fixture valide et une invalide dans
+`.qa/contracts/fixtures/` ; `src/contracts.fixtures.test.ts` les vérifie (règle
+détaillée dans `AGENTS.md`).
+
 ### `plugin build` — plugin distribuable généré (qa-mesh-next)
 
 ```bash
@@ -241,6 +257,7 @@ Le kernel est ainsi invocable depuis n'importe quel emplacement du projet.
 | `src/loop/whitelist.ts` | Glob minimal (littéral/`*`/`**`) — réutilisé par `loop-guard.js` |
 | `src/loop/config.ts` | Schéma `loop.yaml` (parse/sérialise) |
 | `src/loop/render.ts` | Rendu pur de `PROGRESS.md` depuis l'historique SQLite |
+| `src/commands/config.ts` | Commande `config check` (contrat `qa-config`) |
 | `src/commands/plugin.ts` | Commande `plugin build` (génération + `--check` anti-dérive) |
 | `src/paths.ts` | Résolution portable de `.qa` |
 

@@ -48,7 +48,8 @@ npm --prefix kernel run build           # compile kernel/dist/ (les agents l'app
 cp .qa/qa.config.example.json .qa/qa.config.json
 ```
 
-Ouvrez `.qa/qa.config.json` et renseignez **au minimum** :
+Ouvrez `.qa/qa.config.json` et renseignez **au minimum** (puis vérifiez avec
+`node kernel/dist/cli.js config check` : une clé mal orthographiée est signalée) :
 - `base_url` : l'adresse de votre application (ex. `https://app.exemple.com`).
 - `roles[].username_env` / `password_env` : les **noms** des variables d'environnement
   qui contiendront les identifiants (jamais les identifiants en clair dans le fichier).

@@ -1,0 +1,46 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-5",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "results": [
+      {
+        "id": "r1",
+        "spec": "tests/todo/todo.ajout.spec.ts",
+        "title": "TC-001: ajout nominal",
+        "status": "OK",
+        "duration_ms": 800,
+        "browser": "chromium"
+      },
+      {
+        "id": "r2",
+        "spec": "tests/todo/todo.ajout.spec.ts",
+        "title": "TC-002: saisie vide",
+        "status": "KO",
+        "duration_ms": 5100,
+        "browser": "chromium"
+      }
+    ],
+    "bugs": [],
+    "summary": {
+      "total": 2,
+      "pass": 1,
+      "fail": 1,
+      "skip": 0,
+      "pass_rate_pct": 50,
+      "flaky_pct": 0
+    }
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  },
+  "_expect_error": {
+    "layer": "payload",
+    "path": "/results/1"
+  }
+}

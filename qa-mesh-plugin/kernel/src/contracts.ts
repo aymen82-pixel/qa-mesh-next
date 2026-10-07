@@ -14,8 +14,8 @@ export interface ValidationResult {
 }
 
 export interface ValidationError {
-  /** `envelope` ou `payload` — quelle couche a échoué. */
-  layer: "envelope" | "payload";
+  /** `envelope`, `payload` ou `config` — quelle couche a échoué. */
+  layer: "envelope" | "payload" | "config";
   /** Chemin JSON Pointer de l'instance fautive (ex. `/pages/0/url`). */
   path: string;
   message: string;
@@ -33,6 +33,7 @@ export class ContractRegistry {
   private readonly envelopeValidate: ValidateFunction;
   /** clé = identifiant agent (`agent-1`, `agent-a11y`, …) → validateur payload. */
   private readonly payloadValidators = new Map<string, ValidateFunction>();
+  private readonly allKeys = new Set<string>();
 
   private constructor(ajv: Ajv, envelopeValidate: ValidateFunction) {
     this.ajv = ajv;
@@ -63,8 +64,10 @@ export class ContractRegistry {
     }
 
     const registry = new ContractRegistry(ajv, envelopeValidate);
+    for (const key of Object.keys(schemas)) registry.allKeys.add(key);
     for (const key of Object.keys(schemas)) {
-      if (key === "envelope") continue;
+      // Seuls les `agent-*` sont des contrats de payload ; `qa-config` valide la config projet.
+      if (!key.startsWith("agent-")) continue;
       // `agent-0.schema.json` → identifiant agent `agent-0`.
       const validate = ajv.getSchema(key);
       if (validate) {
@@ -72,6 +75,16 @@ export class ContractRegistry {
       }
     }
     return registry;
+  }
+
+  /** Validateur compilé d'un schéma par sa clé (nom de fichier sans `.schema.json`). */
+  schema(key: string): ValidateFunction | undefined {
+    return this.ajv.getSchema(key);
+  }
+
+  /** Clés de tous les schémas chargés (enveloppe, agents, config). */
+  schemaKeys(): string[] {
+    return [...this.allKeys].sort();
   }
 
   /** Identifiants agents disposant d'un contrat de payload. */
@@ -117,9 +130,25 @@ export class ContractRegistry {
   }
 }
 
+/** Identifiant du contrat de configuration projet (`.qa/contracts/qa-config.schema.json`). */
+export const CONFIG_SCHEMA = "qa-config";
+
+/**
+ * Valide `.qa/qa.config.json` (document nu, pas d'enveloppe). Méthode séparée :
+ * la config n'est pas un livrable d'agent.
+ */
+export function validateConfig(registry: ContractRegistry, doc: unknown): ValidationResult {
+  const validate = registry.schema(CONFIG_SCHEMA);
+  if (!validate) {
+    throw new Error(`Contrat ${CONFIG_SCHEMA}.schema.json introuvable dans .qa/contracts`);
+  }
+  const valid = validate(doc) as boolean;
+  return { valid, errors: valid ? [] : mapErrors(validate.errors, "config"), warnings: [] };
+}
+
 function mapErrors(
   errors: ErrorObject[] | null | undefined,
-  layer: "envelope" | "payload",
+  layer: ValidationError["layer"],
 ): ValidationError[] {
   if (!errors) return [];
   return errors.map((e) => ({

@@ -1,0 +1,49 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-spec",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "sfd_path": ".qa/sdd/sfd.md",
+    "features": [
+      {
+        "id": "F-001",
+        "name": "Ajout de tâche",
+        "description": "le système ajoute une tâche saisie",
+        "priority": "C",
+        "rules": [
+          "RG-001.1 une tâche vide est refusée"
+        ],
+        "error_cases": [
+          "saisie vide"
+        ],
+        "actors": [
+          "utilisateur"
+        ]
+      }
+    ],
+    "open_questions": [
+      {
+        "id": "Q-001",
+        "question": "longueur maximale d'une tâche ?",
+        "impact": "cas limite non testable",
+        "blocking": false
+      }
+    ],
+    "summary": {
+      "features_total": 1,
+      "questions_total": 1,
+      "blocking_questions": 0,
+      "source_files": [
+        "input/brief.md"
+      ]
+    }
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  }
+}

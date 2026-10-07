@@ -1,0 +1,37 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-3",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "features": [
+      {
+        "file": "specs/todo/ajout.feature",
+        "scenarios": [
+          {
+            "scenario_id": "TC-001",
+            "journey_id": "J-001",
+            "tags": [
+              "@critique",
+              "@smoke",
+              "@ia-generated"
+            ]
+          }
+        ]
+      }
+    ],
+    "csv_path": "docs/qa/test-cases/TC-todo-2026-10-07.csv",
+    "matrix_path": "docs/qa/test-cases/matrix-todo-2026-10-07.md"
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  },
+  "_expect_error": {
+    "layer": "payload",
+    "path": "/features/0/scenarios/0"
+  }
+}

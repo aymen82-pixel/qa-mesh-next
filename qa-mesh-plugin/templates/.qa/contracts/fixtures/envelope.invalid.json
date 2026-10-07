@@ -1,0 +1,20 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "07-10-2026",
+  "agent": "qa-analyst",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "summary": "campagne terminée"
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  },
+  "_expect_error": {
+    "layer": "envelope",
+    "path": "/run_id"
+  }
+}

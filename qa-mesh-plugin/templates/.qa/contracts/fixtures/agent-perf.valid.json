@@ -1,0 +1,35 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-perf",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "vitals": [
+      {
+        "page": "/todos",
+        "metric": "LCP",
+        "value_ms": 900,
+        "budget_ms": 2500,
+        "status": "OK",
+        "samples": 3
+      }
+    ],
+    "load": {
+      "executed": false,
+      "reason": "load.allowed=false"
+    },
+    "summary": {
+      "pages_measured": 1,
+      "budgets_total": 1,
+      "budgets_ko": 0,
+      "load_executed": false
+    }
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  }
+}

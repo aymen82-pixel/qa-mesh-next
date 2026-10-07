@@ -1,0 +1,39 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-0",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "domain": "todo",
+    "coverage_gaps": [
+      {
+        "route": "/todos",
+        "domain": "todo",
+        "existing_tests": 0,
+        "priority": "C",
+        "reason": "aucun spec"
+      }
+    ],
+    "coverage_map": [
+      {
+        "domain": "todo",
+        "coverage_score": 0.25
+      }
+    ],
+    "session": {
+      "role": "default",
+      "expires_at": "2026-10-08T10:00:00Z"
+    }
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  },
+  "_expect_error": {
+    "layer": "payload",
+    "path": "/session"
+  }
+}

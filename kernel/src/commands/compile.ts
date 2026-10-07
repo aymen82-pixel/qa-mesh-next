@@ -5,6 +5,11 @@ import { parseYaml } from "../routing/yaml";
 import { readManifest, readRules, type AgentMeta } from "../manifest/manifest";
 import { compileTarget, TARGETS, type OutputFile, type RuleFile, type Target } from "../manifest/targets";
 
+/** Fichiers bundle des runtimes sans sous-agents : susceptibles d'exister à la main. */
+const BUNDLE_PATHS = new Set(["AGENTS.md", "GEMINI.md", ".github/copilot-instructions.md"]);
+/** Présent dans tout bundle émis par `bundle()` (manifest/targets.ts). */
+export const GENERATED_MARKER = "(généré par `qa-mesh compile`)";
+
 export interface CompileOptions {
   target: string;
   /** Mode vérification : compare aux fichiers existants, n'écrit rien. */
@@ -20,12 +25,12 @@ export interface CompileOutcome {
   stdout: string;
 }
 
-export function runCompile(opts: CompileOptions): CompileOutcome {
+export function runCompile(opts: CompileOptions & { root?: string }): CompileOutcome {
   if (!TARGETS.includes(opts.target as Target)) {
     return fail(opts.json, `compile : cible inconnue "${opts.target}". Cibles : ${TARGETS.join(", ")}`);
   }
   const target = opts.target as Target;
-  const root = repoRoot(opts.qaDir ?? findQaDir());
+  const root = opts.root ?? repoRoot(opts.qaDir ?? findQaDir());
 
   const { agents, rules } = loadAgents(root);
   const outputs = compileTarget(target, agents, rules);
@@ -39,6 +44,23 @@ export function runCompile(opts: CompileOptions): CompileOutcome {
       exitCode: 0,
       stdout: opts.json ? JSON.stringify({ wouldWrite: list }) : list.map((p) => `+ ${p}`).join("\n"),
     };
+  }
+
+  // Garde : un bundle (AGENTS.md, GEMINI.md, copilot-instructions.md) n'écrase
+  // jamais un fichier écrit à la main du même nom (ex. AGENTS.md de qa-mesh-next).
+  const handWritten = outputs
+    .filter((o) => BUNDLE_PATHS.has(o.path))
+    .filter((o) => {
+      const abs = join(root, o.path);
+      return existsSync(abs) && !readFileSync(abs, "utf8").includes(GENERATED_MARKER);
+    })
+    .map((o) => o.path);
+  if (handWritten.length) {
+    return fail(
+      opts.json,
+      `compile : refus d'écraser ${handWritten.join(", ")} (fichier écrit à la main, sans le marqueur « ${GENERATED_MARKER} »). ` +
+        "Compiler dans le projet cible, ou renommer le fichier existant.",
+    );
   }
 
   for (const out of outputs) {

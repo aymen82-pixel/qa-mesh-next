@@ -1,0 +1,35 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-4",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "files": {
+      "pages": [
+        "pages/todo.page.ts"
+      ],
+      "tests": [
+        "tests/todo/todo.ajout.spec.ts"
+      ],
+      "fixtures": [
+        "fixtures/pages.fixture.ts"
+      ]
+    },
+    "scenarios_covered": [
+      {
+        "scenario_id": "TC-001",
+        "spec": "tests/todo/todo.ajout.spec.ts",
+        "test_title": "TC-001: ajout nominal"
+      }
+    ],
+    "selectors_added": 1,
+    "compile_check": "passed"
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-1",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "commons": {
+      "elements": [
+        {
+          "page": "*",
+          "type": "link",
+          "label": "Accueil",
+          "selector_primary": "getByRole('link',{name:'Accueil'})"
+        }
+      ]
+    },
+    "pages": [
+      {
+        "url": "/todos",
+        "title": "Todos",
+        "complexity": "simple",
+        "error_states": [
+          {
+            "trigger": "saisie vide",
+            "message": "aucun item créé"
+          }
+        ]
+      }
+    ],
+    "elements": [
+      {
+        "page": "/todos",
+        "type": "textbox",
+        "label": "Nouvelle tâche",
+        "aria_role": "textbox",
+        "selector_primary": "",
+        "selector_fallback": "getByRole('textbox')",
+        "action": "fill"
+      }
+    ],
+    "api_calls": [
+      {
+        "method": "POST",
+        "endpoint": "/api/todos",
+        "trigger": "Entrée"
+      }
+    ]
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  },
+  "_expect_error": {
+    "layer": "payload",
+    "path": "/elements/0/selector_primary"
+  }
+}

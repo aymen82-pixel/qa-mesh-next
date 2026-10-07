@@ -1,0 +1,54 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-po",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "user_stories": [
+      {
+        "id": "US-001",
+        "feature_id": "F-001",
+        "as_a": "utilisateur",
+        "i_want": "ajouter une tâche",
+        "so_that": "ne pas l'oublier",
+        "priority": "C",
+        "status": "draft",
+        "acceptance_criteria": [
+          {
+            "id": "US-001.AC-1",
+            "given": "la liste est vide",
+            "when": "je saisis 'Lait' et valide",
+            "then": "la liste contient 'Lait'",
+            "rule_refs": [
+              "RG-001.1"
+            ]
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "total": 1,
+      "draft": 1,
+      "blocked": 0,
+      "by_priority": {
+        "C": 1,
+        "E": 0,
+        "M": 0,
+        "F": 0
+      },
+      "checkpoint_required": false,
+      "backlog_path": ".qa/sdd/BACKLOG.md"
+    }
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  },
+  "_expect_error": {
+    "layer": "payload",
+    "path": "/summary/checkpoint_required"
+  }
+}

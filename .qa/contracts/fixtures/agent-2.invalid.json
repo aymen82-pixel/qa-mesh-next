@@ -1,0 +1,43 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-2",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "journeys": [
+      {
+        "id": "J-1",
+        "feature": "ajout de tâche",
+        "role": "default",
+        "type": "NOM",
+        "priority": "C",
+        "entry_point": "/todos",
+        "exit_point": "/todos",
+        "steps": [
+          "saisir 'Lait' puis Entrée -> la tâche apparaît dans la liste"
+        ],
+        "variants": [
+          {
+            "id": "J-001a",
+            "type": "ERR",
+            "delta_steps": [
+              "valider une saisie vide -> aucune tâche créée"
+            ]
+          }
+        ],
+        "manual": false
+      }
+    ]
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  },
+  "_expect_error": {
+    "layer": "payload",
+    "path": "/journeys/0/id"
+  }
+}

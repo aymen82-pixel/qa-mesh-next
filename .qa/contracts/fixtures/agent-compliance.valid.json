@@ -1,0 +1,35 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-compliance",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "checks": [
+      {
+        "id": "GDPR-03",
+        "regulation": "RGPD",
+        "requirement": "Politique de confidentialité accessible",
+        "status": "KO",
+        "severity": "C",
+        "evidence_path": ".qa/runs/2026-10-07-001/evidence/gdpr-03.png",
+        "observed": "aucun lien en pied de page",
+        "recommendation": "ajouter le lien sur chaque page"
+      }
+    ],
+    "summary": {
+      "total": 1,
+      "ok": 0,
+      "ko": 1,
+      "ins": 0,
+      "ign": 0,
+      "disclaimer": "Indices observables — ne constitue pas un avis juridique."
+    }
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  }
+}

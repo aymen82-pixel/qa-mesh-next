@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "qa-mesh/qa-config.schema.json",
+  "title": "Configuration projet .qa/qa.config.json — SEUL fichier de données projet",
+  "description": "Validée par `qa-mesh config check`. Toute nouvelle clé de config passe par ce schéma (et ses deux fixtures) dans le même commit que son consommateur.",
+  "type": "object",
+  "required": ["base_url", "paths", "roles", "auth"],
+  "additionalProperties": false,
+  "patternProperties": { "^\\$comment$": { "type": "string" } },
+  "properties": {
+    "base_url": { "type": "string", "format": "uri", "pattern": "^https?://" },
+    "language": { "type": "string", "minLength": 2 },
+    "test_management_tool": { "enum": ["xray", "zephyr", "testrail", "none"] },
+    "paths": {
+      "type": "object",
+      "required": ["testDir", "pagesDir", "fixturesDir"],
+      "additionalProperties": false,
+      "properties": {
+        "testDir": { "type": "string", "minLength": 1 },
+        "pagesDir": { "type": "string", "minLength": 1 },
+        "fixturesDir": { "type": "string", "minLength": 1 },
+        "docsDir": { "type": "string" },
+        "test_data": { "type": "string" }
+      }
+    },
+    "run_command": { "type": "string", "minLength": 1 },
+    "compile_command": { "type": "string", "minLength": 1 },
+    "known_routes": { "type": "array", "items": { "type": "string" } },
+    "excluded_routes": { "type": "array", "items": { "type": "string" } },
+    "roles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "username_env", "password_env"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "username_env": { "$ref": "#/definitions/envName" },
+          "password_env": { "$ref": "#/definitions/envName" },
+          "default": { "type": "boolean" }
+        }
+      }
+    },
+    "auth": {
+      "type": "object",
+      "required": ["login_url"],
+      "additionalProperties": false,
+      "properties": {
+        "login_url": { "type": "string", "pattern": "^/" },
+        "steps": { "type": "array", "items": { "type": "string" } },
+        "session_ttl_hours": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "specialists": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "a11y": { "type": "boolean" },
+        "compliance": { "type": "boolean" },
+        "perf": { "type": "boolean" }
+      }
+    },
+    "compliance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ai_features": { "type": "boolean" },
+        "personal_data": { "type": "boolean" },
+        "high_risk_ai": { "type": "boolean" }
+      }
+    },
+    "perf": {
+      "type": "object",
+      "properties": {
+        "max_pages": { "type": "integer", "minimum": 1 },
+        "budgets": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0 }
+        },
+        "load": {
+          "type": "object",
+          "required": ["allowed"],
+          "properties": {
+            "allowed": { "type": "boolean" },
+            "target_env": { "type": "string" },
+            "script_path": { "type": "string" },
+            "vus": { "type": "integer", "minimum": 1 },
+            "duration": { "type": "string" },
+            "prod_authorized_by": { "type": "string" }
+          }
+        }
+      }
+    },
+    "sdd": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "input_dir": { "type": "string" },
+        "output_dir": { "type": "string" }
+      }
+    },
+    "coverage_intelligence": {
+      "type": "object",
+      "properties": {
+        "business_risk": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0, "maximum": 10 } },
+        "floors": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0, "maximum": 100 } },
+        "weights": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0 } },
+        "max_staleness_days": { "type": "number", "minimum": 0 },
+        "staleness_floor": { "type": "number", "minimum": 0, "maximum": 100 },
+        "stability_window": { "type": "integer", "minimum": 1 },
+        "recency_tau_days": { "type": "number", "exclusiveMinimum": 0 },
+        "path_domain_map": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    }
+  },
+  "definitions": {
+    "envName": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*$",
+      "description": "NOM d'une variable d'environnement — jamais la valeur du secret."
+    }
+  }
+}

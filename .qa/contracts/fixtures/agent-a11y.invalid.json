@@ -1,0 +1,43 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-07-001",
+  "agent": "agent-a11y",
+  "status": "ok",
+  "domain": "todo",
+  "payload": {
+    "violations": [
+      {
+        "id": "A-001",
+        "page": "/todos",
+        "rule": "label",
+        "impact": "blocker",
+        "severity": "E",
+        "wcag": "1.3.1",
+        "nodes_count": 1,
+        "selector_sample": "input.toggle",
+        "suggested_fix": "associer un label à la case"
+      }
+    ],
+    "summary": {
+      "pages_scanned": 1,
+      "violations_total": 1,
+      "method": "axe-core",
+      "by_impact": {
+        "critical": 0,
+        "serious": 1,
+        "moderate": 0,
+        "minor": 0
+      }
+    }
+  },
+  "errors": [],
+  "metrics": {
+    "duration_ms": 1200,
+    "items_produced": 1
+  },
+  "_expect_error": {
+    "layer": "payload",
+    "path": "/violations/0/impact"
+  }
+}

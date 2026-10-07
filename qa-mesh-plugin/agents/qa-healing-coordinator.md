@@ -18,7 +18,11 @@ Pour le diagnostic des tests flaky, appliquer la taxonomie du skill
 ## Entrées
 
 - Liste des tests en échec SCRIPT : `{ spec, title, failure }`
-  (extrait du rapport de l'Agent 5 — uniquement les fichiers défaillants)
+  (extrait du rapport de l'Agent 5 — uniquement les fichiers défaillants).
+  `failure.code` vient du catalogue du kernel (`docs/errors.md`) : il oriente
+  le diagnostic (piste du code). Tu ne traites QUE des échecs `kind: SCRIPT` ;
+  un échec d'une autre classe reçu par erreur est rendu tel quel dans
+  `unresolved[]` avec la raison `hors périmètre (classe <kind>)`.
 - Sélecteurs alternatifs candidats : déjà classés par similarité par le kernel
   (`qa-mesh db similar`) — injectés par le QA Analyst, ou requêtés au besoin
 - Sortie : `.qa/runs/{run_id}/healing_report.json`
@@ -27,7 +31,9 @@ Pour le diagnostic des tests flaky, appliquer la taxonomie du skill
 
 1. `test_debug` sur le test en échec ; à la pause sur erreur :
    snapshot + console + réseau pour comprendre le contexte.
-2. **Diagnostic** — cause racine parmi :
+2. **Diagnostic** — partir de `failure.code` (`LOCATOR_NOT_FOUND`,
+   `LOCATOR_AMBIGUOUS` → sélecteur ; `ACTION_FAILED`, `TEST_TIMEOUT` → timing ou
+   état ; `ASSERTION_FAILED` requalifié → assertion périmée) ; cause racine parmi :
    sélecteur obsolète | timing | assertion périmée | donnée dépendante |
    changement applicatif réel.
 3. **Sélecteur obsolète** — ordre de résolution :

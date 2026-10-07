@@ -1,0 +1,149 @@
+{
+  "$comment": "Messages réels produits par @playwright/test 1.56.1 (chromium), ANSI et code frame retirés. Régénérer à chaque montée de version de Playwright. Contexte : auth.login_url = /login.",
+  "playwright": "1.56.1",
+  "login_url": "/login",
+  "cases": [
+    {
+      "name": "locator-not-found",
+      "expected": "LOCATOR_NOT_FOUND",
+      "messages": [
+        "TimeoutError: locator.click: Timeout 500ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: 'Save' })"
+      ]
+    },
+    {
+      "name": "expect-not-found",
+      "expected": "LOCATOR_NOT_FOUND",
+      "messages": [
+        "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Todos' })\nExpected: visible\nTimeout: 500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 500ms\n  - waiting for getByRole('heading', { name: 'Todos' })"
+      ]
+    },
+    {
+      "name": "ambiguous",
+      "expected": "LOCATOR_AMBIGUOUS",
+      "messages": [
+        "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Go' }) resolved to 2 elements:\n    1) <button>Go</button> aka getByRole('button', { name: 'Go' }).first()\n    2) <button>Go</button> aka getByRole('button', { name: 'Go' }).nth(1)\n\nCall log:\n  - waiting for getByRole('button', { name: 'Go' })"
+      ]
+    },
+    {
+      "name": "action-disabled",
+      "expected": "ACTION_FAILED",
+      "messages": [
+        "TimeoutError: locator.click: Timeout 500ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: 'Go' })\n    - locator resolved to <button disabled>Go</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not enabled\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not enabled\n    - retrying click action\n      - waiting 100ms\n    - waiting for element to be visible, enabled and stable\n    - element is not enabled\n  - retrying click action\n    - waiting 500ms"
+      ]
+    },
+    {
+      "name": "assertion-text",
+      "expected": "ASSERTION_FAILED",
+      "messages": [
+        "Error: compteur\n\nexpect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('status')\nExpected: \"1 remaining\"\nReceived: \"0 remaining\"\nTimeout:  500ms\n\nCall log:\n  - compteur with timeout 500ms\n  - waiting for getByRole('status')\n    4 × locator resolved to <p role=\"status\">0 remaining</p>\n      - unexpected value \"0 remaining\""
+      ]
+    },
+    {
+      "name": "assertion-value",
+      "expected": "ASSERTION_FAILED",
+      "messages": [
+        "Error: statut\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: 201\nReceived: 2"
+      ]
+    },
+    {
+      "name": "unreachable",
+      "expected": "ENV_UNREACHABLE",
+      "messages": [
+        "Error: page.goto: net::ERR_UNSAFE_PORT at http://127.0.0.1:9/\nCall log:\n  - navigating to \"http://127.0.0.1:9/\", waiting until \"load\""
+      ]
+    },
+    {
+      "name": "refused",
+      "expected": "ENV_UNREACHABLE",
+      "messages": [
+        "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:59999/\nCall log:\n  - navigating to \"http://127.0.0.1:59999/\", waiting until \"load\""
+      ]
+    },
+    {
+      "name": "dns",
+      "expected": "ENV_UNREACHABLE",
+      "messages": [
+        "Error: page.goto: net::ERR_NAME_NOT_RESOLVED at http://qa-mesh-unresolvable.invalid/\nCall log:\n  - navigating to \"http://qa-mesh-unresolvable.invalid/\", waiting until \"load\""
+      ]
+    },
+    {
+      "name": "api-refused",
+      "expected": "ENV_UNREACHABLE",
+      "messages": [
+        "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:59999\nCall log:\n  - → GET http://127.0.0.1:59999/\n    - user-agent: Playwright/1.56.1 (x64; ubuntu 24.04) node/22.22\n    - accept: */*\n    - accept-encoding: gzip,deflate,br"
+      ]
+    },
+    {
+      "name": "nav-timeout",
+      "expected": "NAV_TIMEOUT",
+      "messages": [
+        "TimeoutError: page.goto: Timeout 1000ms exceeded.\nCall log:\n  - navigating to \"http://127.0.0.1:65000/slow\", waiting until \"load\"",
+        "Tearing down \"context\" exceeded the test timeout of 4000ms."
+      ]
+    },
+    {
+      "name": "waitforurl-timeout",
+      "expected": "NAV_TIMEOUT",
+      "messages": [
+        "TimeoutError: page.waitForURL: Timeout 1000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/dashboard\" until \"load\"\n============================================================"
+      ]
+    },
+    {
+      "name": "url-login",
+      "expected": "AUTH_EXPIRED",
+      "messages": [
+        "Error: expect(page).toHaveURL(expected) failed\n\nExpected pattern: /\\/dashboard/\nReceived string:  \"http://app.test/login?next=/x\"\nTimeout: 500ms\n\nCall log:\n  - Expect \"toHaveURL\" with timeout 500ms\n    4 × unexpected value \"http://app.test/login?next=/x\""
+      ]
+    },
+    {
+      "name": "test-timeout",
+      "expected": "LOCATOR_NOT_FOUND",
+      "messages": [
+        "Test timeout of 1500ms exceeded.",
+        "Error: locator.click: Test timeout of 1500ms exceeded.\nCall log:\n  - waiting for getByText('never')"
+      ]
+    },
+    {
+      "name": "contract",
+      "expected": "CONTRACT_MISMATCH",
+      "messages": [
+        "Error: Réponse POST http://127.0.0.1:59998/items (HTTP 201) non conforme au schéma attendu :\n[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"id\"\n    ],\n    \"message\": \"Invalid input: expected string, received number\"\n  },\n  {\n    \"code\": \"unrecognized_keys\",\n    \"keys\": [\n      \"extra\"\n    ],\n    \"path\": [],\n    \"message\": \"Unrecognized key: \\\"extra\\\"\"\n  }\n]"
+      ]
+    },
+    {
+      "name": "contract-500",
+      "expected": "HTTP_5XX",
+      "messages": [
+        "Error: Réponse GET http://127.0.0.1:59997/items (HTTP 500) non conforme au schéma attendu :\n[\n  {\n    \"expected\": \"array\",\n    \"code\": \"invalid_type\",\n    \"path\": [],\n    \"message\": \"Invalid input: expected array, received object\"\n  }\n]"
+      ]
+    },
+    {
+      "name": "status-500",
+      "expected": "HTTP_5XX",
+      "messages": [
+        "Error: la création doit renvoyer 201\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: 201\nReceived: 500"
+      ]
+    },
+    {
+      "name": "unauthorized-api",
+      "expected": "AUTH_EXPIRED",
+      "messages": [
+        "Error: Réponse GET http://127.0.0.1:59995/items (HTTP 401) non conforme au schéma attendu :\n[\n  {\n    \"expected\": \"array\",\n    \"code\": \"invalid_type\",\n    \"path\": [],\n    \"message\": \"Invalid input: expected array, received object\"\n  }\n]"
+      ]
+    },
+    {
+      "name": "test-timeout-seul",
+      "expected": "TEST_TIMEOUT",
+      "messages": [
+        "Test timeout of 1500ms exceeded."
+      ]
+    },
+    {
+      "name": "erreur-de-code-du-test",
+      "expected": "UNCLASSIFIED",
+      "messages": [
+        "TypeError: Cannot read properties of undefined (reading 'id')"
+      ]
+    }
+  ]
+}

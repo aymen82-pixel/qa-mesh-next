@@ -104,7 +104,7 @@ test("valide un payload agent-5 (résolution des $ref croisés vers l'enveloppe)
     payload: {
       results: [
         { id: "1", spec: "a.spec.ts", title: "ok", status: "OK", duration_ms: 5 },
-        { id: "2", spec: "b.spec.ts", title: "ko", status: "KO", duration_ms: 9, failure: { kind: "SCRIPT", message: "x" } },
+        { id: "2", spec: "b.spec.ts", title: "ko", status: "KO", duration_ms: 9, failure: { kind: "SCRIPT", code: "LOCATOR_NOT_FOUND", message: "x" } },
       ],
       bugs: [],
       summary: { total: 2, pass: 1, fail: 1, skip: 0, pass_rate_pct: 50 },

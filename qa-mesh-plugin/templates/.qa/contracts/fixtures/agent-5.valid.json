@@ -26,17 +26,32 @@
           "kind": "SCRIPT",
           "line": 21,
           "message": "locator.click: Timeout 5000ms exceeded",
-          "evidence_path": "test-results/r2/trace.zip"
+          "evidence_path": "test-results/r2/trace.zip",
+          "code": "LOCATOR_NOT_FOUND"
+        }
+      },
+      {
+        "id": "r3",
+        "spec": "tests/todo/todo.compteur.spec.ts",
+        "title": "TC-003: compteur",
+        "status": "KO",
+        "duration_ms": 900,
+        "browser": "chromium",
+        "failure": {
+          "kind": "SCRIPT",
+          "code": "ASSERTION_FAILED",
+          "requalified_reason": "libellé du compteur renommé volontairement (ticket UX-12), assertion périmée",
+          "message": "expect(locator).toHaveText(expected) failed"
         }
       }
     ],
     "bugs": [],
     "summary": {
-      "total": 2,
+      "total": 3,
       "pass": 1,
-      "fail": 1,
+      "fail": 2,
       "skip": 0,
-      "pass_rate_pct": 50,
+      "pass_rate_pct": 33.33,
       "flaky_pct": 0
     }
   },

@@ -22,7 +22,9 @@ uniquement.
 
 ## Workflow
 
-1. Exécuter la suite avec le reporter JSON (jamais de parsing de prose).
+1. Exécuter la suite avec le reporter JSON écrit dans le run (jamais de
+   parsing de prose) :
+   `PLAYWRIGHT_JSON_OUTPUT_NAME=.qa/runs/{run_id}/playwright.json npx playwright test {path} --reporter=json`.
    **Sharding par feature** (étape 6) : lancer avec `--workers` (et `--shard i/n`
    en CI, un shard par domaine/feature) pour paralléliser ; le mur du temps est
    le navigateur. Les `results[]` agrégés couvrent 100 % des tests, tous shards
@@ -31,19 +33,25 @@ uniquement.
 2. Pour chaque test, produire :
    `{ id, spec, title, status: OK|KO|INS|IGN, duration_ms, browser }`.
    `INS` = réussi après retry Playwright (flaky).
-3. **Classification de chaque KO** :
-   - `PRODUIT` : l'app dévie du résultat attendu (assertion métier échouée,
-     erreur 500, message d'erreur applicatif) → entrée dans `bugs_report.json`.
-   - `SCRIPT` : sélecteur introuvable, timeout d'attente, assertion obsolète,
-     erreur de code du test → à router vers l'Agent 6.
-   - `ENV` : réseau, données absentes, service down, instabilité → consigner,
-     ne pas réparer.
-   Indices de classification : type d'erreur Playwright, code HTTP, stack.
-   En cas de doute entre PRODUIT et SCRIPT → `SCRIPT` (le healing tranchera).
-4. Pour tout échec SCRIPT « sélecteur non trouvé » : demander au kernel le
+3. **Classification de chaque KO — par le kernel, AVANT tout raisonnement** :
+   `qa-mesh classify --report .qa/runs/{run_id}/playwright.json --json`.
+   Recopier pour chaque échec `failure.code` (code du catalogue) et
+   `failure.kind` (= classe du code). Catalogue et pistes : `docs/errors.md`.
+   - Code **non ambigu** (`LOCATOR_AMBIGUOUS`, `AUTH_EXPIRED`,
+     `ENV_UNREACHABLE`, `HTTP_5XX`) : la classe est imposée, ne pas la discuter.
+   - Code **ambigu** (`LOCATOR_NOT_FOUND`, `ACTION_FAILED`, `NAV_TIMEOUT`,
+     `TEST_TIMEOUT`, `CONTRACT_MISMATCH`, `ASSERTION_FAILED`, `UNCLASSIFIED`) :
+     garder la classe par défaut, sauf preuve contraire dans le message ou le
+     scénario ; toute requalification exige `failure.requalified_reason`
+     (contrat agent-5, une phrase factuelle).
+   - `UNCLASSIFIED` est le seul cas de raisonnement libre ; en cas de doute
+     entre PRODUIT et SCRIPT → `SCRIPT` (le healing tranchera).
+   Destinations : `PRODUIT` → `bugs_report.json` ; `SCRIPT` → Agent 6 ;
+   `ENV` → consigner, ne pas réparer.
+4. Pour tout échec `LOCATOR_NOT_FOUND` : demander au kernel le
    sélecteur le plus proche (requête déterministe, pas de lecture LLM du JSON) —
    `qa-mesh db similar --domain <d> --page <p> --label <l> --top 1 --json` —
-   et inclure le candidat dans `suggested_fix`.
+   et inclure le candidat dans `suggested_fix` (avec la piste du code).
 5. Bug report compact (PRODUIT uniquement) :
    `{ id, title, severity: C|E|M|F, steps[], expected, actual, evidence_path, scenario_id, suggested_fix }`.
 
@@ -59,7 +67,7 @@ uniquement.
     "results": [
       { "id": "", "spec": "", "title": "", "status": "OK",
         "duration_ms": 0, "browser": "",
-        "failure": { "kind": "SCRIPT", "line": 0, "message": "",
+        "failure": { "kind": "SCRIPT", "code": "LOCATOR_NOT_FOUND", "line": 0, "message": "",
                       "evidence_path": "", "suggested_fix": "" } }
     ],
     "bugs": [],

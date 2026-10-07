@@ -15,6 +15,9 @@ function setup(withContracts = false) {
   return qaDir;
 }
 
+/** Code du catalogue dont la classe par défaut est le kind voulu (contrat agent-5). */
+const CODE_FOR_KIND = { SCRIPT: "LOCATOR_NOT_FOUND", ENV: "ENV_UNREACHABLE", PRODUIT: "HTTP_5XX" } as const;
+
 function validReport(overrides: { status?: string; failureKind?: "SCRIPT" | "ENV" | "PRODUIT" } = {}) {
   const result =
     overrides.status === "KO"
@@ -24,7 +27,11 @@ function validReport(overrides: { status?: string; failureKind?: "SCRIPT" | "ENV
           title: "paiement",
           status: "KO",
           duration_ms: 10,
-          failure: { kind: overrides.failureKind ?? "SCRIPT", message: "erreur simulée" },
+          failure: {
+            kind: overrides.failureKind ?? "SCRIPT",
+            code: CODE_FOR_KIND[overrides.failureKind ?? "SCRIPT"],
+            message: "erreur simulée",
+          },
         }
       : { id: "1", spec: "tests/checkout/pay.spec.ts", title: "paiement", status: "OK", duration_ms: 10 };
   return {

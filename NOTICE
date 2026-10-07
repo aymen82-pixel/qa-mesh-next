@@ -1,0 +1,36 @@
+qa-mesh-next
+Plateforme QA multi-agents Playwright, dérivée de qa-mesh (aymen82-pixel).
+
+Ce dépôt contient du contenu adapté de tiers. Les attributions et licences
+requises sont reproduites ci-dessous.
+
+------------------------------------------------------------------------------
+e2e — https://github.com/tester-army/e2e
+Licence : Apache License 2.0 (texte complet : LICENSES/Apache-2.0.txt)
+
+NOTICE d'origine, reproduit tel quel :
+
+    e2e
+    Copyright 2026 TesterArmy, Inc.
+
+    This product includes software developed at TesterArmy, Inc.
+    (https://tester.army).
+
+Aucun code ni paquet npm de e2e n'est embarqué : les patterns ci-dessous sont
+réimplémentés sur @playwright/test et le kernel qa-mesh. Fichiers dérivés,
+avec leur source (révision 6d5c24a) et la nature de la modification :
+
+| Fichier qa-mesh-next | Source e2e | Modification |
+| --- | --- | --- |
+| kernel/src/errors/check.ts | scripts/check-error-codes.ts | Principe repris (code utilisé non documenté / documenté jamais levé), réécrit pour le catalogue qa-mesh, ses règles, fixtures et le contrat agent-5 |
+| kernel/src/errors/catalog.ts | docs/reference/errors.mdx | Principe « code + classe + piste, jamais choisi par un modèle » ; codes et classes PRODUIT/SCRIPT/ENV propres à qa-mesh |
+| docs/errors.md | docs/reference/errors.mdx, skills/e2e/references/debugging.md | Structure de la référence d'erreurs, réécrite en français pour qa-mesh |
+| kernel/src/contracts.fixtures.test.ts, AGENTS.md (section Contrats) | AGENTS.md (section Contracts) | Règle « une fixture valide + une invalide par schéma, schéma + fixtures + producteur dans la même revue », adaptée aux contrats qa-mesh |
+
+------------------------------------------------------------------------------
+playwright-skill (TestDino) — https://github.com/testdino-hq/playwright-skill
+Licence : MIT
+
+| Fichier qa-mesh-next | Modification |
+| --- | --- |
+| .claude/skills/playwright-best-practices/ (SKILL.md, references/*.md) | Sous-ensemble curaté (v2.3.0), hérité de qa-mesh |

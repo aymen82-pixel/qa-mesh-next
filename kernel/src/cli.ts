@@ -9,6 +9,8 @@ import { runCoverage } from "./commands/coverage";
 import { runLoop } from "./commands/loop";
 import { runPlugin } from "./commands/plugin";
 import { runConfigCheck } from "./commands/config";
+import { runClassify } from "./commands/classify";
+import { runErrors } from "./commands/errors";
 
 const VERSION = "2.0.0-alpha.1";
 
@@ -62,6 +64,11 @@ Usage :
   qa-mesh loop status [--loop <id>] [--run <run_id>] [--json]
       Loops autonomes (v3) : verdict et décision déterministes, PROGRESS.md généré.
 
+  qa-mesh classify --report <playwright.json> [--login-url /login] [--json]
+      Attribue à chaque test en échec un code du catalogue, sa classe PRODUIT|SCRIPT|ENV et une piste.
+  qa-mesh errors list|check [--json]
+      Liste le catalogue des codes ; check vérifie catalogue, docs/errors.md, règles, fixtures et contrat agent-5.
+
   qa-mesh config check [fichier] [--json]
       Valide .qa/qa.config.json (ou le fichier donné) contre qa-config.schema.json.
 
@@ -96,6 +103,8 @@ function parse(argv: string[]): ParsedArgs {
     "since", "dependents", "depth", "users", "frequency",
     // loops autonomes (v3)
     "loop", "criteria", "max-iterations", "agents", "whitelist", "report",
+    // classify (C5)
+    "login-url",
   ]);
 
   for (let i = 0; i < argv.length; i++) {
@@ -276,6 +285,21 @@ function main(argv: string[]): number {
           bools: args.bools,
           qaDir,
         });
+        process.stdout.write(outcome.stdout + "\n");
+        return outcome.exitCode;
+      }
+      case "classify": {
+        const outcome = runClassify({ report: first(args, "report"), loginUrl: first(args, "login-url"), json: args.bools.has("json"), qaDir });
+        process.stdout.write(outcome.stdout + "\n");
+        return outcome.exitCode;
+      }
+      case "errors": {
+        const mode = args.positionals[0];
+        if (mode !== "check" && mode !== "list") {
+          process.stderr.write("errors : sous-commande inconnue (list|check)\n");
+          return 2;
+        }
+        const outcome = runErrors({ mode, json: args.bools.has("json"), qaDir });
         process.stdout.write(outcome.stdout + "\n");
         return outcome.exitCode;
       }

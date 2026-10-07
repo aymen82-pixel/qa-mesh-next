@@ -21,7 +21,13 @@
         "title": "TC-002: saisie vide",
         "status": "KO",
         "duration_ms": 5100,
-        "browser": "chromium"
+        "browser": "chromium",
+        "failure": {
+          "kind": "SCRIPT",
+          "code": "ENV_UNREACHABLE",
+          "line": 21,
+          "message": "page.goto: net::ERR_CONNECTION_REFUSED"
+        }
       }
     ],
     "bugs": [],
@@ -41,6 +47,6 @@
   },
   "_expect_error": {
     "layer": "payload",
-    "path": "/results/1"
+    "path": "/results/1/failure/kind"
   }
 }

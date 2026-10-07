@@ -1,0 +1,713 @@
+{
+ "suites": [
+  {
+   "title": "gen.spec.ts",
+   "file": "gen.spec.ts",
+   "column": 0,
+   "line": 0,
+   "specs": [
+    {
+     "title": "locator-not-found",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 0,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 591,
+         "error": {
+          "message": "TimeoutError: locator.click: Timeout 500ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Save' })\u001b[22m\n",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 143,
+           "line": 3
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 143,
+            "line": 3
+           },
+           "message": "TimeoutError: locator.click: Timeout 500ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Save' })\u001b[22m\n\n\n  1 | import { test, expect, request } from '@playwright/test';\n  2 | const html = (b: string) => `data:text/html,${encodeURIComponent(b)}`;\n> 3 | test('locator-not-found', async ({ page }) => { await page.goto(html('<button>A</button>')); await page.getByRole('button', { name: 'Save' }).click(); });\n    |                                                                                                                                               ^\n  4 | test('expect-not-found', async ({ page }) => { await page.goto(html('<p>x</p>')); await expect(page.getByRole('heading', { name: 'Todos' })).toBeVisible(); });\n  5 | test('ambiguous', async ({ page }) => { await page.goto(html('<button>Go</button><button>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n  6 | test('action-disabled', async ({ page }) => { await page.goto(html('<button disabled>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n    at .tmp-errgen/gen.spec.ts:3:143"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:29.881Z",
+         "annotations": [],
+         "attachments": [
+          {
+           "name": "error-context",
+           "contentType": "text/markdown",
+           "path": "test-results/gen-locator-not-found/error-context.md"
+          }
+         ],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 143,
+          "line": 3
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-c4471d9b51fb0e39cf70",
+     "file": "gen.spec.ts",
+     "line": 3,
+     "column": 5
+    },
+    {
+     "title": "expect-not-found",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 1,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 613,
+         "error": {
+          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Todos' })\nExpected: visible\nTimeout: 500ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 500ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Todos' })\u001b[22m\n",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 142,
+           "line": 4
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 142,
+            "line": 4
+           },
+           "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('heading', { name: 'Todos' })\nExpected: visible\nTimeout: 500ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 500ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Todos' })\u001b[22m\n\n\n  2 | const html = (b: string) => `data:text/html,${encodeURIComponent(b)}`;\n  3 | test('locator-not-found', async ({ page }) => { await page.goto(html('<button>A</button>')); await page.getByRole('button', { name: 'Save' }).click(); });\n> 4 | test('expect-not-found', async ({ page }) => { await page.goto(html('<p>x</p>')); await expect(page.getByRole('heading', { name: 'Todos' })).toBeVisible(); });\n    |                                                                                                                                              ^\n  5 | test('ambiguous', async ({ page }) => { await page.goto(html('<button>Go</button><button>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n  6 | test('action-disabled', async ({ page }) => { await page.goto(html('<button disabled>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n  7 | test('assertion-text', async ({ page }) => { await page.goto(html('<p role=\"status\">0 remaining</p>')); await expect(page.getByRole('status'), 'compteur').toHaveText('1 remaining'); });\n    at .tmp-errgen/gen.spec.ts:4:142"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:31.262Z",
+         "annotations": [],
+         "attachments": [
+          {
+           "name": "error-context",
+           "contentType": "text/markdown",
+           "path": "test-results/gen-expect-not-found/error-context.md"
+          }
+         ],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 142,
+          "line": 4
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-d9f5e1b0198cc7e0f0d5",
+     "file": "gen.spec.ts",
+     "line": 4,
+     "column": 5
+    },
+    {
+     "title": "ambiguous",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 2,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 118,
+         "error": {
+          "message": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Go' }) resolved to 2 elements:\n    1) <button>Go</button> aka getByRole('button', { name: 'Go' }).first()\n    2) <button>Go</button> aka getByRole('button', { name: 'Go' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Go' })\u001b[22m\n",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 153,
+           "line": 5
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 153,
+            "line": 5
+           },
+           "message": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Go' }) resolved to 2 elements:\n    1) <button>Go</button> aka getByRole('button', { name: 'Go' }).first()\n    2) <button>Go</button> aka getByRole('button', { name: 'Go' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Go' })\u001b[22m\n\n\n  3 | test('locator-not-found', async ({ page }) => { await page.goto(html('<button>A</button>')); await page.getByRole('button', { name: 'Save' }).click(); });\n  4 | test('expect-not-found', async ({ page }) => { await page.goto(html('<p>x</p>')); await expect(page.getByRole('heading', { name: 'Todos' })).toBeVisible(); });\n> 5 | test('ambiguous', async ({ page }) => { await page.goto(html('<button>Go</button><button>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n    |                                                                                                                                                         ^\n  6 | test('action-disabled', async ({ page }) => { await page.goto(html('<button disabled>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n  7 | test('assertion-text', async ({ page }) => { await page.goto(html('<p role=\"status\">0 remaining</p>')); await expect(page.getByRole('status'), 'compteur').toHaveText('1 remaining'); });\n  8 | test('assertion-value', async () => { expect(2, 'statut').toBe(201); });\n    at .tmp-errgen/gen.spec.ts:5:153"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:32.763Z",
+         "annotations": [],
+         "attachments": [
+          {
+           "name": "error-context",
+           "contentType": "text/markdown",
+           "path": "test-results/gen-ambiguous/error-context.md"
+          }
+         ],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 153,
+          "line": 5
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-0188b407ccad31844190",
+     "file": "gen.spec.ts",
+     "line": 5,
+     "column": 5
+    },
+    {
+     "title": "action-disabled",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 3,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 594,
+         "error": {
+          "message": "TimeoutError: locator.click: Timeout 500ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Go' })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled>Go</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not enabled\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 149,
+           "line": 6
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 149,
+            "line": 6
+           },
+           "message": "TimeoutError: locator.click: Timeout 500ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Go' })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled>Go</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not enabled\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 500ms\u001b[22m\n\n\n  4 | test('expect-not-found', async ({ page }) => { await page.goto(html('<p>x</p>')); await expect(page.getByRole('heading', { name: 'Todos' })).toBeVisible(); });\n  5 | test('ambiguous', async ({ page }) => { await page.goto(html('<button>Go</button><button>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n> 6 | test('action-disabled', async ({ page }) => { await page.goto(html('<button disabled>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n    |                                                                                                                                                     ^\n  7 | test('assertion-text', async ({ page }) => { await page.goto(html('<p role=\"status\">0 remaining</p>')); await expect(page.getByRole('status'), 'compteur').toHaveText('1 remaining'); });\n  8 | test('assertion-value', async () => { expect(2, 'statut').toBe(201); });\n  9 | test('unreachable', async ({ page }) => { await page.goto('http://127.0.0.1:9/'); });\n    at .tmp-errgen/gen.spec.ts:6:149"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:33.724Z",
+         "annotations": [],
+         "attachments": [
+          {
+           "name": "error-context",
+           "contentType": "text/markdown",
+           "path": "test-results/gen-action-disabled/error-context.md"
+          }
+         ],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 149,
+          "line": 6
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-db5cd53e2cc91e19c70b",
+     "file": "gen.spec.ts",
+     "line": 6,
+     "column": 5
+    },
+    {
+     "title": "assertion-text",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 4,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 619,
+         "error": {
+          "message": "Error: compteur\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('status')\nExpected: \u001b[32m\"\u001b[7m1\u001b[27m remaining\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7m0\u001b[27m remaining\"\u001b[39m\nTimeout:  500ms\n\nCall log:\n\u001b[2m  - compteur with timeout 500ms\u001b[22m\n\u001b[2m  - waiting for getByRole('status')\u001b[22m\n\u001b[2m    4 × locator resolved to <p role=\"status\">0 remaining</p>\u001b[22m\n\u001b[2m      - unexpected value \"0 remaining\"\u001b[22m\n",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 156,
+           "line": 7
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 156,
+            "line": 7
+           },
+           "message": "Error: compteur\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('status')\nExpected: \u001b[32m\"\u001b[7m1\u001b[27m remaining\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7m0\u001b[27m remaining\"\u001b[39m\nTimeout:  500ms\n\nCall log:\n\u001b[2m  - compteur with timeout 500ms\u001b[22m\n\u001b[2m  - waiting for getByRole('status')\u001b[22m\n\u001b[2m    4 × locator resolved to <p role=\"status\">0 remaining</p>\u001b[22m\n\u001b[2m      - unexpected value \"0 remaining\"\u001b[22m\n\n\n   5 | test('ambiguous', async ({ page }) => { await page.goto(html('<button>Go</button><button>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n   6 | test('action-disabled', async ({ page }) => { await page.goto(html('<button disabled>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n>  7 | test('assertion-text', async ({ page }) => { await page.goto(html('<p role=\"status\">0 remaining</p>')); await expect(page.getByRole('status'), 'compteur').toHaveText('1 remaining'); });\n     |                                                                                                                                                            ^\n   8 | test('assertion-value', async () => { expect(2, 'statut').toBe(201); });\n   9 | test('unreachable', async ({ page }) => { await page.goto('http://127.0.0.1:9/'); });\n  10 | test('nav-timeout', async ({ page }) => { await page.route('**/*', () => {}); await page.goto('http://127.0.0.1:65000/slow'); });\n    at .tmp-errgen/gen.spec.ts:7:156"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:35.099Z",
+         "annotations": [],
+         "attachments": [
+          {
+           "name": "error-context",
+           "contentType": "text/markdown",
+           "path": "test-results/gen-assertion-text/error-context.md"
+          }
+         ],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 156,
+          "line": 7
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-a4b60554dc464106d59c",
+     "file": "gen.spec.ts",
+     "line": 7,
+     "column": 5
+    },
+    {
+     "title": "assertion-value",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 5,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 20,
+         "error": {
+          "message": "Error: statut\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m2\u001b[39m",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 59,
+           "line": 8
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 59,
+            "line": 8
+           },
+           "message": "Error: statut\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m201\u001b[39m\nReceived: \u001b[31m2\u001b[39m\n\n   6 | test('action-disabled', async ({ page }) => { await page.goto(html('<button disabled>Go</button>')); await page.getByRole('button', { name: 'Go' }).click(); });\n   7 | test('assertion-text', async ({ page }) => { await page.goto(html('<p role=\"status\">0 remaining</p>')); await expect(page.getByRole('status'), 'compteur').toHaveText('1 remaining'); });\n>  8 | test('assertion-value', async () => { expect(2, 'statut').toBe(201); });\n     |                                                           ^\n   9 | test('unreachable', async ({ page }) => { await page.goto('http://127.0.0.1:9/'); });\n  10 | test('nav-timeout', async ({ page }) => { await page.route('**/*', () => {}); await page.goto('http://127.0.0.1:65000/slow'); });\n  11 | test('waitforurl-timeout', async ({ page }) => { await page.goto(html('<p>x</p>')); await page.waitForURL('**/dashboard'); });\n    at .tmp-errgen/gen.spec.ts:8:59"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:36.497Z",
+         "annotations": [],
+         "attachments": [],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 59,
+          "line": 8
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-dde98ab8df5223588ee7",
+     "file": "gen.spec.ts",
+     "line": 8,
+     "column": 5
+    },
+    {
+     "title": "unreachable",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 6,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 1124,
+         "error": {
+          "message": "Error: page.goto: net::ERR_UNSAFE_PORT at http://127.0.0.1:9/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:9/\", waiting until \"load\"\u001b[22m\n",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 54,
+           "line": 9
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 54,
+            "line": 9
+           },
+           "message": "Error: page.goto: net::ERR_UNSAFE_PORT at http://127.0.0.1:9/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:9/\", waiting until \"load\"\u001b[22m\n\n\n   7 | test('assertion-text', async ({ page }) => { await page.goto(html('<p role=\"status\">0 remaining</p>')); await expect(page.getByRole('status'), 'compteur').toHaveText('1 remaining'); });\n   8 | test('assertion-value', async () => { expect(2, 'statut').toBe(201); });\n>  9 | test('unreachable', async ({ page }) => { await page.goto('http://127.0.0.1:9/'); });\n     |                                                      ^\n  10 | test('nav-timeout', async ({ page }) => { await page.route('**/*', () => {}); await page.goto('http://127.0.0.1:65000/slow'); });\n  11 | test('waitforurl-timeout', async ({ page }) => { await page.goto(html('<p>x</p>')); await page.waitForURL('**/dashboard'); });\n  12 | test('url-login', async ({ page }) => { await page.route('http://app.test/**', (r) => r.fulfill({ body: '<p>login</p>', contentType: 'text/html' })); await page.goto('http://app.test/login?next=/x'); await expect(page).toHaveURL(/\\/dashboard/); });\n    at .tmp-errgen/gen.spec.ts:9:54"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:37.309Z",
+         "annotations": [],
+         "attachments": [],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 54,
+          "line": 9
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-dbbd69208dabf51d168b",
+     "file": "gen.spec.ts",
+     "line": 9,
+     "column": 5
+    },
+    {
+     "title": "nav-timeout",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 7,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 5070,
+         "error": {
+          "message": "TimeoutError: page.goto: Timeout 1000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:65000/slow\", waiting until \"load\"\u001b[22m\n",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 90,
+           "line": 10
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 90,
+            "line": 10
+           },
+           "message": "TimeoutError: page.goto: Timeout 1000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:65000/slow\", waiting until \"load\"\u001b[22m\n\n\n   8 | test('assertion-value', async () => { expect(2, 'statut').toBe(201); });\n   9 | test('unreachable', async ({ page }) => { await page.goto('http://127.0.0.1:9/'); });\n> 10 | test('nav-timeout', async ({ page }) => { await page.route('**/*', () => {}); await page.goto('http://127.0.0.1:65000/slow'); });\n     |                                                                                          ^\n  11 | test('waitforurl-timeout', async ({ page }) => { await page.goto(html('<p>x</p>')); await page.waitForURL('**/dashboard'); });\n  12 | test('url-login', async ({ page }) => { await page.route('http://app.test/**', (r) => r.fulfill({ body: '<p>login</p>', contentType: 'text/html' })); await page.goto('http://app.test/login?next=/x'); await expect(page).toHaveURL(/\\/dashboard/); });\n  13 | test('test-timeout', async ({ page }) => { test.setTimeout(1500); await page.goto(html('<p>x</p>')); await page.getByText('never').click({ timeout: 10000 }); });\n    at .tmp-errgen/gen.spec.ts:10:90"
+          },
+          {
+           "message": "\u001b[31mTearing down \"context\" exceeded the test timeout of 4000ms.\u001b[39m"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:39.319Z",
+         "annotations": [],
+         "attachments": [],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 90,
+          "line": 10
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-cb00c84efc8f59edd492",
+     "file": "gen.spec.ts",
+     "line": 10,
+     "column": 5
+    },
+    {
+     "title": "waitforurl-timeout",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 8,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 1122,
+         "error": {
+          "message": "TimeoutError: page.waitForURL: Timeout 1000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/dashboard\" until \"load\"\n============================================================",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 96,
+           "line": 11
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 96,
+            "line": 11
+           },
+           "message": "TimeoutError: page.waitForURL: Timeout 1000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/dashboard\" until \"load\"\n============================================================\n\n   9 | test('unreachable', async ({ page }) => { await page.goto('http://127.0.0.1:9/'); });\n  10 | test('nav-timeout', async ({ page }) => { await page.route('**/*', () => {}); await page.goto('http://127.0.0.1:65000/slow'); });\n> 11 | test('waitforurl-timeout', async ({ page }) => { await page.goto(html('<p>x</p>')); await page.waitForURL('**/dashboard'); });\n     |                                                                                                ^\n  12 | test('url-login', async ({ page }) => { await page.route('http://app.test/**', (r) => r.fulfill({ body: '<p>login</p>', contentType: 'text/html' })); await page.goto('http://app.test/login?next=/x'); await expect(page).toHaveURL(/\\/dashboard/); });\n  13 | test('test-timeout', async ({ page }) => { test.setTimeout(1500); await page.goto(html('<p>x</p>')); await page.getByText('never').click({ timeout: 10000 }); });\n  14 | test('http-500', async () => { const ctx = await request.newContext(); const r = await ctx.get('http://127.0.0.1:9/').catch((e: Error) => { throw e; }); expect(r.status()).toBe(200); });\n    at .tmp-errgen/gen.spec.ts:11:96"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:46.183Z",
+         "annotations": [],
+         "attachments": [
+          {
+           "name": "error-context",
+           "contentType": "text/markdown",
+           "path": "test-results/gen-waitforurl-timeout/error-context.md"
+          }
+         ],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 96,
+          "line": 11
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-50b30132c5477c19b98f",
+     "file": "gen.spec.ts",
+     "line": 11,
+     "column": 5
+    },
+    {
+     "title": "url-login",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 9,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 602,
+         "error": {
+          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/dashboard/\u001b[39m\nReceived string:  \u001b[31m\"http://app.test/login?next=/x\"\u001b[39m\nTimeout: 500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 500ms\u001b[22m\n\u001b[2m    4 × unexpected value \"http://app.test/login?next=/x\"\u001b[22m\n",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 220,
+           "line": 12
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 220,
+            "line": 12
+           },
+           "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/dashboard/\u001b[39m\nReceived string:  \u001b[31m\"http://app.test/login?next=/x\"\u001b[39m\nTimeout: 500ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 500ms\u001b[22m\n\u001b[2m    4 × unexpected value \"http://app.test/login?next=/x\"\u001b[22m\n\n\n  10 | test('nav-timeout', async ({ page }) => { await page.route('**/*', () => {}); await page.goto('http://127.0.0.1:65000/slow'); });\n  11 | test('waitforurl-timeout', async ({ page }) => { await page.goto(html('<p>x</p>')); await page.waitForURL('**/dashboard'); });\n> 12 | test('url-login', async ({ page }) => { await page.route('http://app.test/**', (r) => r.fulfill({ body: '<p>login</p>', contentType: 'text/html' })); await page.goto('http://app.test/login?next=/x'); await expect(page).toHaveURL(/\\/dashboard/); });\n     |                                                                                                                                                                                                                            ^\n  13 | test('test-timeout', async ({ page }) => { test.setTimeout(1500); await page.goto(html('<p>x</p>')); await page.getByText('never').click({ timeout: 10000 }); });\n  14 | test('http-500', async () => { const ctx = await request.newContext(); const r = await ctx.get('http://127.0.0.1:9/').catch((e: Error) => { throw e; }); expect(r.status()).toBe(200); });\n  15 |\n    at .tmp-errgen/gen.spec.ts:12:220"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:48.071Z",
+         "annotations": [],
+         "attachments": [
+          {
+           "name": "error-context",
+           "contentType": "text/markdown",
+           "path": "test-results/gen-url-login/error-context.md"
+          }
+         ],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 220,
+          "line": 12
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-28576ff7c1147920e1af",
+     "file": "gen.spec.ts",
+     "line": 12,
+     "column": 5
+    },
+    {
+     "title": "test-timeout",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 1500,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 10,
+         "parallelIndex": 0,
+         "status": "timedOut",
+         "duration": 1521,
+         "error": {
+          "message": "\u001b[31mTest timeout of 1500ms exceeded.\u001b[39m"
+         },
+         "errors": [
+          {
+           "message": "\u001b[31mTest timeout of 1500ms exceeded.\u001b[39m"
+          },
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 132,
+            "line": 13
+           },
+           "message": "Error: locator.click: Test timeout of 1500ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('never')\u001b[22m\n\n\n  11 | test('waitforurl-timeout', async ({ page }) => { await page.goto(html('<p>x</p>')); await page.waitForURL('**/dashboard'); });\n  12 | test('url-login', async ({ page }) => { await page.route('http://app.test/**', (r) => r.fulfill({ body: '<p>login</p>', contentType: 'text/html' })); await page.goto('http://app.test/login?next=/x'); await expect(page).toHaveURL(/\\/dashboard/); });\n> 13 | test('test-timeout', async ({ page }) => { test.setTimeout(1500); await page.goto(html('<p>x</p>')); await page.getByText('never').click({ timeout: 10000 }); });\n     |                                                                                                                                    ^\n  14 | test('http-500', async () => { const ctx = await request.newContext(); const r = await ctx.get('http://127.0.0.1:9/').catch((e: Error) => { throw e; }); expect(r.status()).toBe(200); });\n  15 |\n    at .tmp-errgen/gen.spec.ts:13:132"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:49.506Z",
+         "annotations": [],
+         "attachments": [
+          {
+           "name": "error-context",
+           "contentType": "text/markdown",
+           "path": "test-results/gen-test-timeout/error-context.md"
+          }
+         ]
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-b933129fceeb3a9a05d0",
+     "file": "gen.spec.ts",
+     "line": 13,
+     "column": 5
+    },
+    {
+     "title": "http-500",
+     "ok": false,
+     "tags": [],
+     "tests": [
+      {
+       "timeout": 4000,
+       "annotations": [],
+       "expectedStatus": "passed",
+       "projectId": "",
+       "projectName": "",
+       "results": [
+        {
+         "workerIndex": 11,
+         "parallelIndex": 0,
+         "status": "failed",
+         "duration": 33,
+         "error": {
+          "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:9\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:9/\u001b[22m\n\u001b[2m    - user-agent: Playwright/1.56.1 (x64; ubuntu 24.04) node/22.22\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n",
+          "location": {
+           "file": ".tmp-errgen/gen.spec.ts",
+           "column": 92,
+           "line": 14
+          }
+         },
+         "errors": [
+          {
+           "location": {
+            "file": ".tmp-errgen/gen.spec.ts",
+            "column": 92,
+            "line": 14
+           },
+           "message": "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:9\nCall log:\n\u001b[2m  - → GET http://127.0.0.1:9/\u001b[22m\n\u001b[2m    - user-agent: Playwright/1.56.1 (x64; ubuntu 24.04) node/22.22\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\n\n  12 | test('url-login', async ({ page }) => { await page.route('http://app.test/**', (r) => r.fulfill({ body: '<p>login</p>', contentType: 'text/html' })); await page.goto('http://app.test/login?next=/x'); await expect(page).toHaveURL(/\\/dashboard/); });\n  13 | test('test-timeout', async ({ page }) => { test.setTimeout(1500); await page.goto(html('<p>x</p>')); await page.getByText('never').click({ timeout: 10000 }); });\n> 14 | test('http-500', async () => { const ctx = await request.newContext(); const r = await ctx.get('http://127.0.0.1:9/').catch((e: Error) => { throw e; }); expect(r.status()).toBe(200); });\n     |                                                                                            ^\n  15 |\n    at .tmp-errgen/gen.spec.ts:14:92"
+          }
+         ],
+         "retry": 0,
+         "startTime": "2026-10-07T21:49:51.899Z",
+         "annotations": [],
+         "attachments": [],
+         "errorLocation": {
+          "file": ".tmp-errgen/gen.spec.ts",
+          "column": 92,
+          "line": 14
+         }
+        }
+       ],
+       "status": "unexpected"
+      }
+     ],
+     "id": "78b40841922a60caaf77-9dd8b562f47f0b8091cb",
+     "file": "gen.spec.ts",
+     "line": 14,
+     "column": 5
+    }
+   ]
+  }
+ ],
+ "errors": [],
+ "stats": {
+  "startTime": "2026-10-07T21:49:29.217Z",
+  "duration": 22763.147999999997,
+  "expected": 0,
+  "skipped": 0,
+  "unexpected": 12,
+  "flaky": 0
+ }
+}

@@ -187,7 +187,9 @@ principe central de qa-mesh/2.0 : 0 token et 0 non-déterminisme sur ces tâches
 ### Phase 5 — Exécution (Agent 5)
 - Entrée : chemin des specs du domaine + commande d'exécution depuis la config.
   Exécution shardée par feature (`--workers`, `--shard i/n` en CI).
-- Valider : `results[]` couvre 100 % des tests lancés ; chaque KO est classifié.
+- Valider : `results[]` couvre 100 % des tests lancés ; chaque KO porte un
+  `failure.code` issu de `qa-mesh classify` (catalogue du kernel) — le contrat
+  agent-5 rejette une classe incohérente avec un code non ambigu.
 - Après validation, persister la mémoire d'exécution :
   `db record-results --run <run_id> --domain <d>` (rapport Agent 5 sur stdin) —
   alimente la validation différentielle (Phase 4) des campagnes suivantes.

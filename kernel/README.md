@@ -196,6 +196,21 @@ node kernel/dist/cli.js loop status [--loop demo] [--run <run_id>] [--json]
 - Gabarit fonctionnel : `loops/demo-regression/` (sur la suite de tests de ce
   repo) — copier le dossier, adapter `loop.yaml`, pour un nouveau loop.
 
+### `classify` / `errors` — taxonomie des codes d'échec (C5)
+
+```bash
+PLAYWRIGHT_JSON_OUTPUT_NAME=out.json npx playwright test --reporter=json
+node kernel/dist/cli.js classify --report out.json [--login-url /login] [--json]
+node kernel/dist/cli.js errors list [--json]   # catalogue code -> classe -> piste
+node kernel/dist/cli.js errors check           # cohérence catalogue / docs / règles / fixtures / contrat
+```
+
+`classify` attribue à chaque test en échec un code de `src/errors/catalog.ts`,
+sa classe PRODUIT|SCRIPT|ENV, un drapeau `ambiguous` et une piste, par règles
+déterministes (`src/errors/classify.ts`) testées sur des messages réels de
+Playwright (`src/errors/fixtures/`). `errors check` tourne aussi dans
+`npm --prefix kernel test`. Détail : `docs/errors.md`.
+
 ### `config check` — conformité de `.qa/qa.config.json`
 
 ```bash
@@ -257,6 +272,11 @@ Le kernel est ainsi invocable depuis n'importe quel emplacement du projet.
 | `src/loop/whitelist.ts` | Glob minimal (littéral/`*`/`**`) — réutilisé par `loop-guard.js` |
 | `src/loop/config.ts` | Schéma `loop.yaml` (parse/sérialise) |
 | `src/loop/render.ts` | Rendu pur de `PROGRESS.md` depuis l'historique SQLite |
+| `src/errors/catalog.ts` | Catalogue des codes d'échec (source unique) |
+| `src/errors/classify.ts` | Règles pures message Playwright -> code |
+| `src/errors/check.ts` | Vérification de cohérence de la taxonomie |
+| `src/commands/classify.ts` | Commande `classify` (rapport JSON Playwright) |
+| `src/commands/errors.ts` | Commandes `errors list/check` |
 | `src/commands/config.ts` | Commande `config check` (contrat `qa-config`) |
 | `src/commands/plugin.ts` | Commande `plugin build` (génération + `--check` anti-dérive) |
 | `src/paths.ts` | Résolution portable de `.qa` |

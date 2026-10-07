@@ -3,64 +3,419 @@
   "$id": "qa-mesh/agent-5.schema.json",
   "title": "Payload Agent 5 — Test Executor",
   "type": "object",
-  "required": ["results", "bugs", "summary"],
+  "required": [
+    "results",
+    "bugs",
+    "summary"
+  ],
   "properties": {
     "results": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "spec", "title", "status", "duration_ms"],
+        "required": [
+          "id",
+          "spec",
+          "title",
+          "status",
+          "duration_ms"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "spec": { "type": "string" },
-          "title": { "type": "string" },
-          "status": { "$ref": "envelope.schema.json#/definitions/test_status" },
-          "duration_ms": { "type": "integer", "minimum": 0 },
-          "browser": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
+          "spec": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "envelope.schema.json#/definitions/test_status"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "browser": {
+            "type": "string"
+          },
           "failure": {
             "type": "object",
-            "required": ["kind", "message"],
+            "required": [
+              "kind",
+              "code",
+              "message"
+            ],
             "properties": {
-              "kind": { "$ref": "envelope.schema.json#/definitions/failure_kind" },
-              "line": { "type": "integer" },
-              "message": { "type": "string" },
-              "evidence_path": { "type": "string" },
-              "suggested_fix": { "type": "string" }
+              "kind": {
+                "$ref": "envelope.schema.json#/definitions/failure_kind",
+                "description": "Classe FINALE de l'échec (après requalification éventuelle). Routée vers l'Agent 6 si SCRIPT."
+              },
+              "code": {
+                "enum": [
+                  "LOCATOR_NOT_FOUND",
+                  "LOCATOR_AMBIGUOUS",
+                  "ACTION_FAILED",
+                  "NAV_TIMEOUT",
+                  "TEST_TIMEOUT",
+                  "AUTH_EXPIRED",
+                  "ENV_UNREACHABLE",
+                  "HTTP_5XX",
+                  "CONTRACT_MISMATCH",
+                  "ASSERTION_FAILED",
+                  "UNCLASSIFIED"
+                ],
+                "description": "Code attribué par `qa-mesh classify` (kernel/src/errors/catalog.ts), jamais par un LLM."
+              },
+              "requalified_reason": {
+                "type": "string",
+                "minLength": 10,
+                "description": "Obligatoire quand kind diffère de la classe par défaut d'un code ambigu."
+              },
+              "line": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "evidence_path": {
+                "type": "string"
+              },
+              "suggested_fix": {
+                "type": "string"
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "LOCATOR_NOT_FOUND"
+                    },
+                    "kind": {
+                      "not": {
+                        "const": "SCRIPT"
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "kind"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "requalified_reason"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "LOCATOR_AMBIGUOUS"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "kind": {
+                      "const": "SCRIPT"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "ACTION_FAILED"
+                    },
+                    "kind": {
+                      "not": {
+                        "const": "SCRIPT"
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "kind"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "requalified_reason"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "NAV_TIMEOUT"
+                    },
+                    "kind": {
+                      "not": {
+                        "const": "ENV"
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "kind"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "requalified_reason"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "TEST_TIMEOUT"
+                    },
+                    "kind": {
+                      "not": {
+                        "const": "SCRIPT"
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "kind"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "requalified_reason"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "AUTH_EXPIRED"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "kind": {
+                      "const": "ENV"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "ENV_UNREACHABLE"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "kind": {
+                      "const": "ENV"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "HTTP_5XX"
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "kind": {
+                      "const": "PRODUIT"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "CONTRACT_MISMATCH"
+                    },
+                    "kind": {
+                      "not": {
+                        "const": "PRODUIT"
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "kind"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "requalified_reason"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "ASSERTION_FAILED"
+                    },
+                    "kind": {
+                      "not": {
+                        "const": "PRODUIT"
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "kind"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "requalified_reason"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "code": {
+                      "const": "UNCLASSIFIED"
+                    },
+                    "kind": {
+                      "not": {
+                        "const": "SCRIPT"
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "kind"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "requalified_reason"
+                  ]
+                }
+              }
+            ],
+            "description": "Code du catalogue -> classe par défaut. Code non ambigu : classe imposée. Code ambigu : requalification possible avec requalified_reason."
+          }
+        },
+        "if": {
+          "properties": {
+            "status": {
+              "const": "KO"
             }
           }
         },
-        "if": { "properties": { "status": { "const": "KO" } } },
-        "then": { "required": ["failure"] }
+        "then": {
+          "required": [
+            "failure"
+          ]
+        }
       }
     },
     "bugs": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "title", "severity", "steps", "expected", "actual"],
+        "required": [
+          "id",
+          "title",
+          "severity",
+          "steps",
+          "expected",
+          "actual"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "title": { "type": "string" },
-          "severity": { "$ref": "envelope.schema.json#/definitions/priority" },
-          "steps": { "type": "array", "items": { "type": "string" } },
-          "expected": { "type": "string" },
-          "actual": { "type": "string" },
-          "evidence_path": { "type": "string" },
-          "scenario_id": { "type": "string" },
-          "suggested_fix": { "type": "string" }
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "severity": {
+            "$ref": "envelope.schema.json#/definitions/priority"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expected": {
+            "type": "string"
+          },
+          "actual": {
+            "type": "string"
+          },
+          "evidence_path": {
+            "type": "string"
+          },
+          "scenario_id": {
+            "type": "string"
+          },
+          "suggested_fix": {
+            "type": "string"
+          }
         }
       }
     },
     "summary": {
       "type": "object",
-      "required": ["total", "pass", "fail", "skip", "pass_rate_pct"],
+      "required": [
+        "total",
+        "pass",
+        "fail",
+        "skip",
+        "pass_rate_pct"
+      ],
       "properties": {
-        "total": { "type": "integer" },
-        "pass": { "type": "integer" },
-        "fail": { "type": "integer" },
-        "skip": { "type": "integer" },
-        "pass_rate_pct": { "type": "number" },
-        "flaky_pct": { "type": "number" }
+        "total": {
+          "type": "integer"
+        },
+        "pass": {
+          "type": "integer"
+        },
+        "fail": {
+          "type": "integer"
+        },
+        "skip": {
+          "type": "integer"
+        },
+        "pass_rate_pct": {
+          "type": "number"
+        },
+        "flaky_pct": {
+          "type": "number"
+        }
       }
     }
   }

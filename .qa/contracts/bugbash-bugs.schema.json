@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "qa-mesh/bugbash-bugs.schema.json",
+  "title": "bugs_report.json d'un bug bash — UNIQUEMENT des bugs confirmés par un test de repro qui échoue (écrit par le kernel)",
+  "type": "object",
+  "required": [
+    "run_id",
+    "generated_at",
+    "bugs"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "bugs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "severity",
+          "route",
+          "expected",
+          "actual",
+          "repro_steps",
+          "repro_spec",
+          "failure",
+          "findings",
+          "charters"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^B-\\d{3}$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "route": {
+            "type": "string"
+          },
+          "expected": {
+            "type": "string"
+          },
+          "actual": {
+            "type": "string"
+          },
+          "repro_steps": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "repro_spec": {
+            "type": "string",
+            "pattern": "^tests/bugbash/.+\\.spec\\.ts$"
+          },
+          "test_title": {
+            "type": "string"
+          },
+          "failure": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Verdict du kernel et message d'échec du test (ASSERTION_FAILED sur le marqueur)"
+          },
+          "root_cause": {
+            "type": "string"
+          },
+          "screenshot_path": {
+            "type": "string"
+          },
+          "findings": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^F-\\d{3}$"
+            }
+          },
+          "charters": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

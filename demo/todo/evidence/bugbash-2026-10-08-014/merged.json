@@ -1,0 +1,54 @@
+{
+  "run_id": "2026-10-08-014",
+  "threshold": 0.3,
+  "issues": [
+    {
+      "id": "B-001",
+      "title": "Le compteur 'items left' ne diminue pas quand une tâche est cochée",
+      "kind": "issue",
+      "severity": 4,
+      "expected": "Après avoir coché Alpha parmi Alpha, Beta, Gamma : '2 items left'. Avec une seule tâche cochée : '0 items left'.",
+      "actual": "Le compteur reste à '3 items left' après avoir coché Alpha puis Beta, et après rechargement (Beta cochée : 3). Avec Alpha seule, cochée : '1 item left'. Il compte toutes les tâches, cochées ou non.",
+      "repro_steps": [
+        "Ouvrir http://127.0.0.1:4280/ (liste vide)",
+        "Saisir 'Alpha' dans 'New todo' et appuyer sur Entrée",
+        "Saisir 'Beta' et appuyer sur Entrée",
+        "Saisir 'Gamma' et appuyer sur Entrée (compteur : '3 items left')",
+        "Cocher la case 'Toggle Alpha'",
+        "Lire le compteur : affiche '3 items left' au lieu de '2 items left'"
+      ],
+      "route": "/",
+      "primary": "F-001",
+      "findings": [
+        "F-001"
+      ],
+      "charters": [
+        1
+      ]
+    },
+    {
+      "id": "B-002",
+      "title": "Une saisie composée uniquement d'espaces crée une tâche au libellé vide",
+      "kind": "issue",
+      "severity": 3,
+      "expected": "Une saisie d'espaces seuls est ignorée comme la saisie vide : aucune tâche créée, liste inchangée.",
+      "actual": "Une tâche sans libellé est ajoutée (case 'Toggle' et bouton 'Delete' sans texte) et le compteur affiche '1 item left'.",
+      "repro_steps": [
+        "Ouvrir http://127.0.0.1:4280/",
+        "Cliquer dans le champ 'New todo'",
+        "Saisir 5 espaces '     '",
+        "Appuyer sur Entrée",
+        "Constater qu'un élément de liste sans texte apparaît et que le compteur indique '1 item left'"
+      ],
+      "route": "/",
+      "primary": "F-002",
+      "findings": [
+        "F-002"
+      ],
+      "charters": [
+        2
+      ]
+    }
+  ],
+  "warnings": []
+}

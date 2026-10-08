@@ -116,3 +116,35 @@ test("init --session : exige une session valide ; --read-only injecte les règle
   assert.equal(ctx.storage_state, ".qa/agentdb/sessions/admin.json");
   assert.ok(ctx.rules.length >= 3);
 });
+
+test("régression : deux runs dans la même base ont chacun leur F-001 (clé (run_id, id))", () => {
+  const { qaDir } = project();
+  for (const run of ["2026-10-08-001", "2026-10-08-002"]) {
+    const xr = (mode: ExploreMode, flags: Record<string, string> = {}, pos: string[] = []) =>
+      runExplore({ mode, qaDir, flags: new Map(Object.entries({ run, ...flags }).map(([k, v]) => [k, [v]])), bools: new Set(["json"]), positionals: pos });
+    assert.equal(xr("init", { goal: "g" }).exitCode, 0);
+    xr("start", { title: "charter", instruction: "i" });
+    const f = join(qaDir, `${run}.json`);
+    writeFileSync(f, JSON.stringify({ ...deliverable(1, { findings: [finding()] }), run_id: run }));
+    const out = xr("ingest", {}, [f]);
+    assert.equal(out.exitCode, 0, out.stdout);
+  }
+});
+
+test("migration : une base créée avec l'ancienne clé (id seul) est migrée sans perte", () => {
+  const { qaDir } = project();
+  const { DatabaseSync } = require("node:sqlite") as typeof import("node:sqlite");
+  const db = new DatabaseSync(join(qaDir, "agentdb", "agentdb.sqlite"));
+  db.exec(`CREATE TABLE explore_findings (id TEXT PRIMARY KEY, run_id TEXT NOT NULL, charter INTEGER NOT NULL, title TEXT NOT NULL,
+    kind TEXT NOT NULL, severity INTEGER NOT NULL, expected TEXT NOT NULL, actual TEXT NOT NULL,
+    repro_steps TEXT NOT NULL, route TEXT NOT NULL, screenshot_path TEXT, reported_at TEXT NOT NULL);
+    INSERT INTO explore_findings VALUES ('F-001','old',1,'t','issue',3,'e','a','["s"]','/',NULL,'x');`);
+  db.close();
+  x(qaDir, "init", { goal: "g" });
+  const check = new DatabaseSync(join(qaDir, "agentdb", "agentdb.sqlite"));
+  const pk = (check.prepare("PRAGMA table_info(explore_findings)").all() as { pk: number }[]).filter((c) => c.pk > 0).length;
+  const rows = (check.prepare("SELECT COUNT(*) AS n FROM explore_findings").get() as { n: number }).n;
+  check.close();
+  assert.equal(pk, 2);
+  assert.equal(rows, 1);
+});

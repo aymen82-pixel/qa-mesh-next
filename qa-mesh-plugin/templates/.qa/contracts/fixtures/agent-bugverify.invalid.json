@@ -1,0 +1,18 @@
+{
+  "protocol": "qa-mesh/2.0",
+  "schema_version": "2.0",
+  "run_id": "2026-10-08-001",
+  "agent": "agent-bugverify",
+  "status": "ok",
+  "payload": {
+    "finding_id": "B-001",
+    "bucket": "candidate",
+    "reason": "la capture montre « 0 items left » après ajout ; le code de comptage ne lit pas la nouvelle tâche",
+    "test_title": "B-001 le compteur suit l'ajout @bugbash",
+    "root_cause": "demo/todo/app.js:42"
+  },
+  "_expect_error": {
+    "layer": "payload",
+    "path": "/"
+  }
+}

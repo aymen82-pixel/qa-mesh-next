@@ -1,0 +1,26 @@
+{
+  "run_id": "2026-10-08-001",
+  "generated_at": "2026-10-08T12:00:00Z",
+  "bugs": [
+    {
+      "id": "B-001",
+      "title": "Le compteur reste à zéro après ajout",
+      "severity": 4,
+      "route": "/",
+      "expected": "1 item left",
+      "actual": "0 items left",
+      "repro_steps": [
+        "ajouter « Lait »"
+      ],
+      "repro_spec": "tests/bugbash/b-001.spec.ts",
+      "test_title": "B-001 le compteur suit l'ajout @bugbash",
+      "failure": "échoue 2/2 fois sur l'assertion [BUG:B-001] (ASSERTION_FAILED)",
+      "findings": [
+        "F-001"
+      ],
+      "charters": [
+        1
+      ]
+    }
+  ]
+}

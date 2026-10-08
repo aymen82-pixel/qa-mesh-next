@@ -74,3 +74,6 @@ CLAUDE.local.md
 
 # Brouillons locaux
 .tmp-*/
+
+# Config du projet testé (données projet, hors du template)
+.qa/qa.config.json

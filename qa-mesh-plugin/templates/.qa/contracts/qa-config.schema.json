@@ -337,6 +337,16 @@
         "minLength": 5
       },
       "description": "Comportements connus et voulus, injectés dans le contexte des explorateurs pour réduire les faux positifs."
+    },
+    "bugbash": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Bug bash : comptes jetables = rôles nommés bb-<slug> dans roles[] (un par charter, session via `session refresh`). shared_env=true impose la lecture seule.",
+      "properties": {
+        "shared_env": {
+          "type": "boolean"
+        }
+      }
     }
   },
   "definitions": {

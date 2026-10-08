@@ -26,6 +26,11 @@ node kernel/dist/cli.js explore close --run <id> --assessment "<texte>"
   départ, zone, posture (« Depuis /cart, changer les quantités et vérifier
   chaque prix et total contre le reste de la page »). Un charter qui couvre
   toute l'app ne couvre rien.
+- `--posture` (optionnel) : `first-time-user`, `numbers-and-copy`,
+  `edge-input`, `state` ou `error-paths` (détail : topic `bug-bash`).
+- Lancer `qa-explorer` (outil Task) avec : le bloc `explore context`, l'objet
+  rendu par `explore start` (index, `output`, `evidence_dir`, `max_steps`,
+  `storage_state`), le titre et l'instruction du charter, et l'URL de base.
 - `--finished` sur `decide` quand l'objectif est couvert.
 - Arrêt calculé par le kernel : objectif couvert, budget de charters, durée
   (dernière minute réservée à la clôture), ou 3 charters consécutifs ratés ou

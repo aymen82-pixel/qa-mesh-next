@@ -1,0 +1,22 @@
+{
+  "run_id": "2026-10-08-001",
+  "generated_at": "2026-10-08T12:00:00Z",
+  "items": [
+    {
+      "id": "B-002",
+      "title": "Lien mort vers l'aide",
+      "kind": "issue",
+      "severity": 2,
+      "route": "/",
+      "status": "peut-être",
+      "reason": "le lien ouvre un nouvel onglet ; la destination répond 200 en navigation directe",
+      "findings": [
+        "F-003"
+      ]
+    }
+  ],
+  "_expect_error": {
+    "layer": "document",
+    "path": "/items/0/status"
+  }
+}

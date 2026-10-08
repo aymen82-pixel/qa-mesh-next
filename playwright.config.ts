@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { loadQaConfig } from './utils/qa-config';
 
 /**
  * Configuration Playwright qa-mesh-next — https://playwright.dev/docs/test-configuration
@@ -9,6 +10,11 @@ export default defineConfig({
 
   /* Run tests in files in parallel */
   fullyParallel: true,
+
+  /* Tests de repro du bug bash (tag @bugbash) : ils échouent tant que le bug
+     existe, donc exclus de la suite normale ; `qa-mesh bugbash verify` les
+     lance avec QA_BUGBASH=1. */
+  grepInvert: process.env.QA_BUGBASH ? undefined : /@bugbash/,
 
   /* Fail the build on CI if you accidentally left test.only in the source code */
   forbidOnly: !!process.env.CI,
@@ -25,7 +31,7 @@ export default defineConfig({
   /* Shared settings for all the projects below */
   use: {
     /* Base URL to use in actions like `await page.goto('/')` — jamais d'URL en dur dans les tests */
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.BASE_URL || loadQaConfig().base_url || 'http://localhost:3000',
 
     /* Trace conservée pour chaque échec : source de `qa-mesh trace render`
        (.qa/runs/<id>/results/<test>/trace.md), lue par les Agents 5 et 6. */
@@ -40,14 +46,6 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    /* Connexion déterministe d'un rôle (tests/auth.setup.ts) — lancée par
-       `qa-mesh session refresh --role <r>`, jamais par un agent via MCP. */
-    {
-      name: 'setup',
-      testMatch: /.*\.setup\.ts/,
-      use: { ...devices['Desktop Chrome'] },
-    },
-
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
@@ -71,6 +69,15 @@ export default defineConfig({
     {
       name: 'Mobile Safari',
       use: { ...devices['iPhone 12'] },
+    },
+    /* Connexion déterministe d'un rôle (tests/auth.setup.ts) — lancée par
+       `qa-mesh session refresh --role <r>`, jamais par un agent via MCP.
+       DERNIER projet : le serveur MCP playwright-test prend le PREMIER projet
+       pour le seed (planner/generator_setup_page). */
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
 

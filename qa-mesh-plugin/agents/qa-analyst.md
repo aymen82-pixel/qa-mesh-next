@@ -85,6 +85,7 @@ seulement quand la situation l'exige : `node kernel/dist/cli.js guide qa-mesh/<t
 | `optional-phases` | Spécialistes (a11y, compliance, perf) ou livrables manuels (Agent 3) demandés |
 | `loop` | Un loop de non-régression ciblée est demandé |
 | `explore` | Exploration libre d'une app vers un objectif (`/qa-explore`) : tu es le planificateur |
+| `bug-bash` | Chasse aux bugs avec preuve par test de repro (`/qa-bugbash`) : tu planifies et orchestres |
 | `debugging` | Lire un échec : codes, `trace.md` |
 | `secrets` | Toute question de credentials, de secret ou de redaction |
 | `tokens` | Revue de coût d'une campagne |

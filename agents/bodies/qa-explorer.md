@@ -17,8 +17,11 @@ kernel et le vérificateur s'en chargent. Approche inspirée de `e2e explore`
 
 ## Démarrage
 
-1. Si une session est fournie : `browser_set_storage_state` sur ce fichier,
-   puis naviguer vers la route de départ. **Ne jamais se connecter avec un mot
+1. **Ouvrir le navigateur** : `planner_setup_page` avec `seedFile: "tests/seed.spec.ts"`
+   (toujours explicite : sans lui, le serveur MCP peut réécrire le seed)
+   — les outils `browser_*` n'existent qu'après cet appel. Si une session est
+   fournie : `browser_set_storage_state` sur ce fichier. Puis
+   `browser_navigate` vers l'URL de base + la route de départ. **Ne jamais se connecter avec un mot
    de passe** ; sans session, rester sur les zones publiques et le dire dans le
    résumé (statut `blocked` si le charter exige d'être connecté).
 2. `browser_snapshot` avant toute action : agir sur ce que la page montre
@@ -50,8 +53,11 @@ Rapporter dès qu'on a une preuve, sans attendre la fin. Un finding =
 - `repro_steps` : étapes rejouables depuis la route de départ (une action
   chacune, avec les valeurs saisies) — elles serviront à écrire le test de repro ;
 - `route` : chemin où le défaut se voit ;
-- `screenshot_path` (optionnel) : `browser_take_screenshot` enregistré dans le
-  dossier de preuves du charter. Aucune capture si un secret a été saisi.
+- `screenshot_path` (optionnel) : `browser_take_screenshot` écrit dans le
+  dossier de sortie du serveur MCP (`.playwright-mcp/`, il refuse tout autre
+  chemin) ; copier ensuite le fichier dans le dossier de preuves du charter
+  (`cp .playwright-mcp/<f>.png <evidence_dir>/`) et indiquer CE chemin. Aucune
+  capture si un secret a été saisi.
 
 Ne PAS rapporter : un comportement listé dans `known_non_bugs`, un finding déjà
 présent dans le contexte, une limite de l'outil (nouvel onglet non suivi,

@@ -16,6 +16,7 @@ import { runSessionRefresh } from "./commands/session";
 import { runTraceRender } from "./commands/trace";
 import { runGuide } from "./commands/guide";
 import { EXPLORE_MODES, runExplore, type ExploreMode } from "./commands/explore";
+import { runBugbash } from "./commands/bugbash";
 
 const VERSION = "2.0.0-alpha.1";
 
@@ -82,6 +83,13 @@ Usage :
   qa-mesh explore close --run <id> [--assessment "<texte>"]
       Mode explore : le kernel tient l'état, les budgets, l'arrêt et le verdict ; PROGRESS.md généré.
 
+  qa-mesh explore init … --bugbash ; explore start … --posture <p> --account <slug>
+  qa-mesh findings merge --run <id> [--threshold 0.3]
+  qa-mesh bugbash verify --run <id> <verify.json> [--project chromium]
+  qa-mesh bugbash report|status --run <id>
+      Bug bash avec preuve : fusion des findings, test de repro jugé par le kernel,
+      bugs_report.json (confirmés seulement) + unconfirmed.json.
+
   qa-mesh guide [skill[/topic] | topic] [--json]
       Documentation à la demande : liste des skills, routeur SKILL.md, ou une référence.
 
@@ -133,7 +141,7 @@ function parse(argv: string[]): ParsedArgs {
     // classify (C5)
     "login-url",
     // explore / bug bash (C3, C4)
-    "goal", "session", "title", "instruction", "posture", "assessment", "charter", "slug", "threshold", "finding", "spec",
+    "goal", "session", "title", "instruction", "posture", "assessment", "charter", "slug", "threshold", "finding", "spec", "account", "project",
   ]);
 
   for (let i = 0; i < argv.length; i++) {
@@ -339,6 +347,18 @@ function main(argv: string[]): number {
           return 2;
         }
         const outcome = runExplore({ mode, flags: args.flags, bools: args.bools, positionals: args.positionals.slice(1), qaDir });
+        process.stdout.write(outcome.stdout + "\n");
+        return outcome.exitCode;
+      }
+      case "findings":
+      case "bugbash": {
+        const sub = args.positionals[0];
+        const mode = command === "findings" ? (sub === "merge" ? "merge" : undefined) : (["verify", "report", "status"].includes(sub ?? "") ? sub : undefined);
+        if (!mode) {
+          process.stderr.write(command === "findings" ? "findings : sous-commande inconnue (merge)\n" : "bugbash : sous-commande inconnue (verify|report|status)\n");
+          return 2;
+        }
+        const outcome = runBugbash({ mode: mode as "merge" | "verify" | "report" | "status", flags: args.flags, bools: args.bools, positionals: args.positionals.slice(1), qaDir });
         process.stdout.write(outcome.stdout + "\n");
         return outcome.exitCode;
       }

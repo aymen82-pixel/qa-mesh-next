@@ -1,0 +1,55 @@
+{
+  "run_id": "2026-10-08-014",
+  "generated_at": "2026-10-08T19:09:37.761Z",
+  "bugs": [
+    {
+      "id": "B-001",
+      "title": "Le compteur 'items left' ne diminue pas quand une tâche est cochée",
+      "severity": 4,
+      "route": "/",
+      "expected": "Après avoir coché Alpha parmi Alpha, Beta, Gamma : '2 items left'. Avec une seule tâche cochée : '0 items left'.",
+      "actual": "Le compteur reste à '3 items left' après avoir coché Alpha puis Beta, et après rechargement (Beta cochée : 3). Avec Alpha seule, cochée : '1 item left'. Il compte toutes les tâches, cochées ou non.",
+      "repro_steps": [
+        "Ouvrir http://127.0.0.1:4280/ (liste vide)",
+        "Saisir 'Alpha' dans 'New todo' et appuyer sur Entrée",
+        "Saisir 'Beta' et appuyer sur Entrée",
+        "Saisir 'Gamma' et appuyer sur Entrée (compteur : '3 items left')",
+        "Cocher la case 'Toggle Alpha'",
+        "Lire le compteur : affiche '3 items left' au lieu de '2 items left'"
+      ],
+      "repro_spec": "tests/bugbash/b-001.spec.ts",
+      "test_title": "B-001 le compteur diminue quand une tâche est cochée @bugbash",
+      "failure": "échoue 2/2 fois sur l'assertion [BUG:B-001] (ASSERTION_FAILED)\nError: [BUG:B-001] le compteur doit valoir 2 après avoir coché Alpha\n\nexpect(locator).toHaveText(expected) failed\n\nLocator:  getByText(/\\d+ items? left/)\nExpected: \"2 items left\"\nReceived: \"3 items left\"\nTimeout:  5000ms\n\nCall log:\n  - [BUG:B-001] le compteur doit valoir 2 après avoir coché Alpha with timeout 5000ms\n  - waiting for getByText(/\\d+ items? left/)\n    9 × locator resolved to <span data-testid=\"todo-count\">3 items left</span>\n      - unexpected value \"3 items left\"",
+      "findings": [
+        "F-001"
+      ],
+      "charters": [
+        1
+      ]
+    },
+    {
+      "id": "B-002",
+      "title": "Une saisie composée uniquement d'espaces crée une tâche au libellé vide",
+      "severity": 3,
+      "route": "/",
+      "expected": "Une saisie d'espaces seuls est ignorée comme la saisie vide : aucune tâche créée, liste inchangée.",
+      "actual": "Une tâche sans libellé est ajoutée (case 'Toggle' et bouton 'Delete' sans texte) et le compteur affiche '1 item left'.",
+      "repro_steps": [
+        "Ouvrir http://127.0.0.1:4280/",
+        "Cliquer dans le champ 'New todo'",
+        "Saisir 5 espaces '     '",
+        "Appuyer sur Entrée",
+        "Constater qu'un élément de liste sans texte apparaît et que le compteur indique '1 item left'"
+      ],
+      "repro_spec": "tests/bugbash/b-002.spec.ts",
+      "test_title": "B-002 une saisie d'espaces seuls ne crée aucune tâche @bugbash",
+      "failure": "échoue 2/2 fois sur l'assertion [BUG:B-002] (ASSERTION_FAILED)\nError: [BUG:B-002] une saisie d'espaces seuls ne doit créer aucune tâche\n\nexpect(locator).toHaveCount(expected) failed\n\nLocator:  getByRole('list', { name: 'Todo list' }).getByRole('listitem')\nExpected: 0\nReceived: 1\nTimeout:  5000ms\n\nCall log:\n  - [BUG:B-002] une saisie d'espaces seuls ne doit créer aucune tâche with timeout 5000ms\n  - waiting for getByRole('list', { name: 'Todo list' }).getByRole('listitem')\n    9 × locator resolved to 1 element\n      - unexpected value \"1\"",
+      "findings": [
+        "F-002"
+      ],
+      "charters": [
+        2
+      ]
+    }
+  ]
+}

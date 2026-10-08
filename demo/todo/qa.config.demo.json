@@ -1,0 +1,11 @@
+{
+  "$comment": "Config de démonstration : cp demo/todo/qa.config.demo.json .qa/qa.config.json (app : node demo/todo/server.ts).",
+  "base_url": "http://127.0.0.1:4280",
+  "language": "fr",
+  "paths": { "testDir": "tests", "pagesDir": "pages", "fixturesDir": "fixtures" },
+  "roles": [{ "name": "default", "username_env": "QA_DEFAULT_USER", "password_env": "QA_DEFAULT_PASSWORD", "default": true }],
+  "auth": { "login_url": "/login" },
+  "explore": { "max_charters": 3, "max_steps_per_charter": 30, "max_duration_min": 15, "parallelism": 1 },
+  "known_non_bugs": ["Les tâches sont stockées dans le localStorage du navigateur : une nouvelle session de navigateur démarre avec une liste vide."],
+  "bugbash": { "shared_env": false }
+}

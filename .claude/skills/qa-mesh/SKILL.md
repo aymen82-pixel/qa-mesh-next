@@ -23,6 +23,7 @@ le kernel imprime le même texte : `node kernel/dist/cli.js guide qa-mesh/<topic
 | `optional-phases` | [references/optional-phases.md](references/optional-phases.md) | Spécialistes a11y / compliance / perf, ou livrables manuels de l'Agent 3 |
 | `loop` | [references/loop.md](references/loop.md) | Non-régression ciblée et bornée sur un module |
 | `explore` | [references/explore.md](references/explore.md) | Explorer une app vers un objectif sans test écrit (`/qa-explore`) |
+| `bug-bash` | [references/bug-bash.md](references/bug-bash.md) | Chasser les bugs en parallèle et prouver chacun par un test de repro (`/qa-bugbash`) |
 | `debugging` | [references/debugging.md](references/debugging.md) | Un test a échoué : code du catalogue, `trace.md` |
 | `secrets` | [references/secrets.md](references/secrets.md) | Credentials, clés, redaction, captures d'écran |
 | `tokens` | [references/tokens.md](references/tokens.md) | Revue ou réduction du coût d'une campagne |

@@ -50,6 +50,10 @@ export const READ_ONLY_RULES = [
   "Aucune boucle de requêtes : un blocage par pare-feu (WAF) est le pare-feu qui marche, pas un finding.",
 ];
 
+/** Postures de charter (e2e, references/bug-bash.md) ; celles qui écrivent sont interdites en lecture seule. */
+export const POSTURES = ["first-time-user", "numbers-and-copy", "edge-input", "state", "error-paths"] as const;
+export const WRITING_POSTURES = new Set(["first-time-user", "edge-input", "state"]);
+
 export function runExplore(opts: ExploreOptions): Outcome {
   const json = opts.bools.has("json");
   const flag = (n: string) => opts.flags.get(n)?.[0];
@@ -62,7 +66,12 @@ export function runExplore(opts: ExploreOptions): Outcome {
   const runId = flag("run");
   if (!runId) return fail(2, `explore ${opts.mode} : --run <run_id> requis`);
   const dir = join(runDir(qaDir, runId), "explore");
-  const config = readProjectConfig(qaDir) as { explore?: Partial<Budgets>; known_non_bugs?: string[] };
+  const config = readProjectConfig(qaDir) as {
+    explore?: Partial<Budgets>;
+    known_non_bugs?: string[];
+    bugbash?: { shared_env?: boolean };
+    roles?: { name: string }[];
+  };
   const redact = projectRedactor(qaDir, opts.env ?? process.env);
   const store = ExploreStore.open(join(qaDir, "agentdb", "agentdb.sqlite"));
   const rel = (p: string) => relative(root, p).split("\\").join("/");
@@ -86,12 +95,16 @@ export function runExplore(opts: ExploreOptions): Outcome {
           db.close();
         }
       }
+      const bugbash = opts.bools.has("bugbash");
+      // Bug bash sur un environnement partagé : lecture seule OBLIGATOIRE.
+      const forcedReadOnly = bugbash && config.bugbash?.shared_env === true;
       const run = {
         run_id: runId,
         goal: redact(goal),
         budgets: resolveBudgets(config.explore),
         started_at: now().toISOString(),
-        read_only: opts.bools.has("read-only"),
+        read_only: opts.bools.has("read-only") || forcedReadOnly,
+        bugbash,
         storage_state: storage,
       };
       store.createRun(run);
@@ -137,12 +150,52 @@ export function runExplore(opts: ExploreOptions): Outcome {
       const title = flag("title");
       const instruction = flag("instruction");
       if (!title || !instruction) return fail(2, "explore start : --title et --instruction requis");
+      const posture = flag("posture");
+      if (posture && !(POSTURES as readonly string[]).includes(posture)) {
+        return fail(2, `explore start : posture inconnue "${posture}" (${POSTURES.join(", ")})`);
+      }
+      if (run.read_only && posture && WRITING_POSTURES.has(posture)) {
+        return fail(1, `explore start refusé : la posture "${posture}" écrit des données, interdite en lecture seule`);
+      }
+      // Bug bash hors lecture seule : un compte jetable par charter (rôle bb-<slug>).
+      const account = flag("account");
+      let storage: string | null = run.storage_state ?? null;
+      // Les comptes jetables ne s'imposent que si l'app en a (rôles bb-<slug> déclarés).
+      const bbRoles = (config.roles ?? []).filter((r) => r.name.startsWith("bb-"));
+      if (run.bugbash && !run.read_only && !account && bbRoles.length) {
+        return fail(2, "explore start : bug bash -> --account <slug> requis (un compte jetable bb-<slug> par charter)");
+      }
+      if (account) {
+        const role = `bb-${account}`;
+        if (!config.roles?.some((r) => r.name === role)) return fail(2, `explore start : rôle "${role}" absent de qa.config.json#roles`);
+        if (charters.some((c) => c.account === account && c.status === "running")) {
+          return fail(1, `explore start refusé : le compte ${role} est déjà utilisé par un charter en cours`);
+        }
+        const db = AgentDb.open(join(qaDir, "agentdb", "agentdb.sqlite"));
+        try {
+          const s = db.getSession(role) as { storage_state_path?: string } | null;
+          if (!s?.storage_state_path) return fail(2, `explore start : aucune session pour "${role}" — \`qa-mesh session refresh --role ${role}\``);
+          storage = s.storage_state_path;
+        } finally {
+          db.close();
+        }
+      }
       const gate = canStartCharter(run, charters, now().getTime());
       if (!gate.ok) return fail(1, `explore start refusé : ${gate.reason}`);
-      const index = store.startCharter(runId, { title: redact(title), instruction: redact(instruction), posture: flag("posture"), started_at: now().toISOString() });
+      const index = store.startCharter(runId, {
+        title: redact(title),
+        instruction: redact(instruction),
+        posture,
+        account,
+        storage_state: storage,
+        started_at: now().toISOString(),
+      });
       const output = rel(join(dir, `charter-${index}.json`));
       mkdirSync(join(dir, `charter-${index}`), { recursive: true });
-      return ok({ index, output, evidence_dir: rel(join(dir, `charter-${index}`)), max_steps: run.budgets.max_steps_per_charter }, `OK charter ${index} — livrable attendu : ${output}`);
+      return ok(
+        { index, output, evidence_dir: rel(join(dir, `charter-${index}`)), max_steps: run.budgets.max_steps_per_charter, storage_state: storage, read_only: run.read_only },
+        `OK charter ${index} — livrable attendu : ${output}${storage ? ` · session ${storage}` : ""}`,
+      );
     }
 
     if (opts.mode === "ingest") {
@@ -165,6 +218,7 @@ export function runExplore(opts: ExploreOptions): Outcome {
       if (charter.status !== "running") return fail(1, `explore ingest : charter ${p.charter.index} déjà clos (${charter.status})`);
 
       const notes: string[] = [];
+      store.transaction(() => {
       let count = store.findingCount(runId);
       for (const f of p.findings as any[]) {
         let shot: string | null = f.screenshot_path ?? null;
@@ -200,6 +254,7 @@ export function runExplore(opts: ExploreOptions): Outcome {
         error_code: p.error_code,
         tainted: !!p.tainted,
         ended_at: now().toISOString(),
+      });
       });
       const updated = store.charters(runId);
       writeFileSync(join(dir, "PROGRESS.md"), renderExploreProgress(run, updated, store.findings(runId)), "utf8");

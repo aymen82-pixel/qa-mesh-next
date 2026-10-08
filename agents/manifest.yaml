@@ -63,6 +63,25 @@ agents:
       - mcp__playwright-test__browser_verify_value
       - mcp__playwright-test__browser_wait_for
       - Bash
+  qa-bug-verifier:
+    description: Agent VERIFY — Vérificateur de bug bash. À utiliser pour trier un candidat issu de la fusion des findings (artefact d'explorateur, environnement, design, fixture ou candidat) et, pour un candidat, écrire un test Playwright de repro qui échoue tant que le bug existe. Le kernel exécute le test et tranche ; l'agent ne déclare jamais un bug confirmé. Exemples - <example>Context: findings merge a produit B-001..B-004. assistant: 'Je lance qa-bug-verifier sur B-001 et B-002 ; il écrit les tests de repro et le kernel rend le verdict.'</example><example>user: 'Prouve ces bugs avant que je les remonte' assistant: 'qa-bug-verifier écrit un test de repro par finding ; seuls ceux qui échouent pour la raison annoncée iront dans bugs_report.json.'</example>
+    model: sonnet
+    color: red
+    tools:
+      - Glob
+      - Grep
+      - Read
+      - Write
+      - Edit
+      - Bash
+      - mcp__playwright-test__planner_setup_page
+      - mcp__playwright-test__browser_navigate
+      - mcp__playwright-test__browser_snapshot
+      - mcp__playwright-test__browser_click
+      - mcp__playwright-test__browser_type
+      - mcp__playwright-test__browser_press_key
+      - mcp__playwright-test__browser_set_storage_state
+      - mcp__playwright-test__browser_generate_locator
   qa-compliance-checker:
     description: Agent COMPLIANCE — Vérificateur de conformité RGPD / EU AI Act. À utiliser pour collecter les indices de conformité réglementaire observables sur l'application testée (consentement cookies, politique de confidentialité, transparence IA), en parallèle des autres spécialistes. Exemples - <example>Context: campagne avec option compliance activée. assistant: 'Je lance qa-compliance-checker en parallèle pour produire le rapport d'indices RGPD/AI Act.'</example><example>user: 'Sommes-nous prêts pour l'AI Act ?' assistant: 'qa-compliance-checker vérifie les exigences observables et liste les points à faire valider juridiquement.'</example>
     model: sonnet
@@ -126,6 +145,7 @@ agents:
       - Read
       - Write
       - Bash
+      - mcp__playwright-test__planner_setup_page
       - mcp__playwright-test__browser_navigate
       - mcp__playwright-test__browser_navigate_back
       - mcp__playwright-test__browser_snapshot

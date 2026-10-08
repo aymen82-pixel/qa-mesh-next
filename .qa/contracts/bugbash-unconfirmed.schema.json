@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "qa-mesh/bugbash-unconfirmed.schema.json",
+  "title": "unconfirmed.json d'un bug bash — findings non prouvés, avec la raison (écrit par le kernel)",
+  "type": "object",
+  "required": [
+    "run_id",
+    "generated_at",
+    "items"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "kind",
+          "severity",
+          "route",
+          "status",
+          "reason",
+          "findings"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[BW]-\\d{3}$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "issue",
+              "warning"
+            ]
+          },
+          "severity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "route": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "not_verified",
+              "not_reproduced",
+              "flaky",
+              "test_invalid",
+              "abandoned",
+              "warning",
+              "rejected:artifact",
+              "rejected:environment",
+              "rejected:design",
+              "rejected:fixture"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "repro_spec": {
+            "type": "string"
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

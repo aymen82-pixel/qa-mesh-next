@@ -1,0 +1,59 @@
+{
+  "run_id": "2026-10-08-012",
+  "goal": "Explorer la liste de tâches comme un nouvel utilisateur : ajouter, cocher, filtrer, supprimer, et vérifier que les compteurs et libellés sont cohérents",
+  "budgets": {
+    "max_charters": 3,
+    "max_steps_per_charter": 30,
+    "max_duration_min": 15,
+    "parallelism": 1
+  },
+  "read_only": false,
+  "ended": "step-limit",
+  "verdict": "failed",
+  "assessment": "Le compteur « items left » ignore les tâches cochées (F-001, sévérité 4) ; ajout, filtres, suppression, Clear completed et persistance se sont comportés correctement. Le charter 3 (bascule globale, édition, saisies limites) a été bloqué par une panne du MCP Playwright : ces zones restent non explorées.",
+  "charters": [
+    {
+      "index": 1,
+      "title": "Ajout et compteur de tâches",
+      "status": "passed",
+      "summary": "Ajout de 3 tâches (dont une avec espaces, balises HTML, &, guillemets : rendue en texte, trimée, OK). Compteur correct à l'ajout (1 item left, 2 items left, 3 items left, singulier/pluriel OK). Cocher/décocher : le compteur ne change pas (reste 3 avec 2 cochées), y compris après rechargement ; il ne diminue qu'à la suppression et semble compter le total, pas les actives. Non couverts : filtres, Clear completed, édition.",
+      "findings": 1
+    },
+    {
+      "index": 2,
+      "title": "Filtres, suppression et Clear completed",
+      "status": "passed",
+      "summary": "Couvert : ajout de 4 puis 3 taches, cocher/decocher (vues All, Active, Completed), filtres All/Active/Completed (contenu correct, y compris acces direct a #/completed et #/active), suppression depuis Completed, Clear completed depuis All, Completed et Active, suppression de la derniere tache (liste vide, pied de page masque), rechargements complets (etat et coches persistes, liste vide persistante), singulier '1 item left'. Aucun nouveau defaut ; seul le compteur ignorant les cochees (F-001) a ete revu, non re-rapporte. Non couvert : saisie vide/espaces/HTML (session navigateur interrompue), edition par double-clic, bascule globale.",
+      "findings": 0
+    },
+    {
+      "index": 3,
+      "title": "Bascule globale, édition et saisies limites",
+      "status": "blocked",
+      "summary": "Aucune action menée : planner_setup_page a expiré deux fois (180 s) et les outils browser_* n'ont pas été exposés. Rien couvert (bascule globale, édition, saisies limites).",
+      "error_code": "ENV_UNREACHABLE",
+      "findings": 0
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "charter": 1,
+      "title": "Le compteur 'items left' ne tient pas compte des tâches cochées",
+      "kind": "issue",
+      "severity": 4,
+      "expected": "Avec 3 tâches dont 1 cochée, le compteur affiche '2 items left' ; avec 2 cochées, '1 item left'.",
+      "actual": "Le compteur reste '3 items left' après avoir coché 1 puis 2 tâches, et après rechargement ; après décochage il reste '3 items left'. Après suppression d'une tâche cochée, il affiche '2 items left' alors que 1 seule est active (il compte le total).",
+      "repro_steps": [
+        "Ouvrir /",
+        "Saisir 'Acheter du lait' dans 'New todo' et appuyer sur Entrée",
+        "Saisir 'Deuxième' et appuyer sur Entrée",
+        "Saisir 'Troisième' et appuyer sur Entrée (compteur : 3 items left)",
+        "Cocher la case 'Toggle Acheter du lait'",
+        "Constater le compteur : '3 items left' au lieu de '2 items left'"
+      ],
+      "route": "/",
+      "screenshot_path": ".qa/runs/2026-10-08-012/explore/charter-1/counter-stuck.png"
+    }
+  ]
+}

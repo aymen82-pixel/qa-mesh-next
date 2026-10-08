@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Todos — app de démo qa-mesh-next</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 520px; margin: 40px auto; color: #222; }
+    h1 { font-weight: 300; font-size: 48px; text-align: center; color: #b83f45; margin: 0 0 16px; }
+    .new-todo { width: 100%; box-sizing: border-box; padding: 12px; font-size: 18px; }
+    ul { list-style: none; padding: 0; }
+    li { display: flex; align-items: center; gap: 8px; padding: 8px 4px; border-bottom: 1px solid #eee; }
+    li.completed label { text-decoration: line-through; color: #999; }
+    li label { flex: 1; }
+    footer { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px; color: #555; }
+    footer nav a { margin: 0 4px; color: inherit; }
+    footer nav a.selected { font-weight: bold; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>todos</h1>
+  <input class="new-todo" placeholder="What needs to be done?" aria-label="New todo" autofocus>
+  <ul class="todo-list" aria-label="Todo list"></ul>
+  <footer class="hidden">
+    <span data-testid="todo-count"></span>
+    <nav aria-label="Filters">
+      <a href="#/" data-filter="all">All</a>
+      <a href="#/active" data-filter="active">Active</a>
+      <a href="#/completed" data-filter="completed">Completed</a>
+    </nav>
+    <button class="clear-completed">Clear completed</button>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

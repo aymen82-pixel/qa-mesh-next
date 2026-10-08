@@ -1,0 +1,74 @@
+{
+  "run_id": "2026-10-08-014",
+  "goal": "Bug bash de la liste de tâches : ajout, saisies, coche, filtres, compteurs",
+  "budgets": {
+    "max_charters": 3,
+    "max_steps_per_charter": 30,
+    "max_duration_min": 15,
+    "parallelism": 1
+  },
+  "read_only": false,
+  "ended": "step-limit",
+  "verdict": "failed",
+  "assessment": "Trois charters (compteurs, saisies limites, état et filtres) ont couvert ajout, coche, suppression, filtres et rechargement. Deux anomalies candidates ont été relevées : le compteur ignore les tâches cochées et une saisie d'espaces seuls crée une tâche sans libellé.",
+  "charters": [
+    {
+      "index": 1,
+      "title": "Compteurs et libellés",
+      "status": "passed",
+      "summary": "Couvert : ajout de 3 tâches, coche/décoche, suppression (tâche cochée et non cochée), rechargement, Clear completed, singulier/pluriel du compteur. Le compteur 'items left' ignore l'état coché des tâches (reste égal au nombre total). Non couvert : filtres Active/Completed, saisies limites (vide, espaces, long, HTML).",
+      "findings": 1
+    },
+    {
+      "index": 2,
+      "title": "Saisies limites",
+      "status": "passed",
+      "summary": "Couvert : saisie vide (Entrée sans texte : rien créé, OK), espaces seuls (tâche créée, défaut), espaces en tête/fin (rognés, OK), HTML <b>x</b> (affiché littéralement, échappé, OK), unicode/emoji (OK), doublons (acceptés, deux lignes 'dup', comportement standard), 300 caractères (acceptée, affichée en entier). Non couvert : rendu visuel du texte long (débordement), filtres, persistance après rechargement.",
+      "findings": 1
+    },
+    {
+      "index": 3,
+      "title": "Etat et filtres",
+      "status": "passed",
+      "summary": "Couvert : ajout de 4 taches, coche/decoche, filtres Active/Completed/All (liste coherente, y compris ajout et decoche depuis un filtre), suppression (en All et en Completed), Clear completed, rechargements (persistance OK), retour arriere entre filtres (OK). Compteur 'items left' incoherent avec l'etat coche : deja couvert par F-001. Edition par double-clic : aucune edition disponible dans l'UI (non evaluable). Non couvert : edition.",
+      "findings": 0
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "charter": 1,
+      "title": "Le compteur 'items left' ne diminue pas quand une tâche est cochée",
+      "kind": "issue",
+      "severity": 4,
+      "expected": "Après avoir coché Alpha parmi Alpha, Beta, Gamma : '2 items left'. Avec une seule tâche cochée : '0 items left'.",
+      "actual": "Le compteur reste à '3 items left' après avoir coché Alpha puis Beta, et après rechargement (Beta cochée : 3). Avec Alpha seule, cochée : '1 item left'. Il compte toutes les tâches, cochées ou non.",
+      "repro_steps": [
+        "Ouvrir http://127.0.0.1:4280/ (liste vide)",
+        "Saisir 'Alpha' dans 'New todo' et appuyer sur Entrée",
+        "Saisir 'Beta' et appuyer sur Entrée",
+        "Saisir 'Gamma' et appuyer sur Entrée (compteur : '3 items left')",
+        "Cocher la case 'Toggle Alpha'",
+        "Lire le compteur : affiche '3 items left' au lieu de '2 items left'"
+      ],
+      "route": "/"
+    },
+    {
+      "id": "F-002",
+      "charter": 2,
+      "title": "Une saisie composée uniquement d'espaces crée une tâche au libellé vide",
+      "kind": "issue",
+      "severity": 3,
+      "expected": "Une saisie d'espaces seuls est ignorée comme la saisie vide : aucune tâche créée, liste inchangée.",
+      "actual": "Une tâche sans libellé est ajoutée (case 'Toggle' et bouton 'Delete' sans texte) et le compteur affiche '1 item left'.",
+      "repro_steps": [
+        "Ouvrir http://127.0.0.1:4280/",
+        "Cliquer dans le champ 'New todo'",
+        "Saisir 5 espaces '     '",
+        "Appuyer sur Entrée",
+        "Constater qu'un élément de liste sans texte apparaît et que le compteur indique '1 item left'"
+      ],
+      "route": "/"
+    }
+  ]
+}

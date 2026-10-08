@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "qa-mesh/agent-bugverify.schema.json",
+  "title": "Payload qa-bug-verifier — tri d'un candidat et test de repro",
+  "type": "object",
+  "required": [
+    "finding_id",
+    "bucket",
+    "reason"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "finding_id": {
+      "type": "string",
+      "pattern": "^B-\\d{3}$"
+    },
+    "bucket": {
+      "enum": [
+        "artifact",
+        "environment",
+        "design",
+        "fixture",
+        "candidate"
+      ],
+      "description": "artifact = limite de l'explorateur ; environment = clé/service/limite propre à l'environnement local ; design = comportement voulu (code, tests ou textes le disent) ; fixture = donnée de seed incomplète ; candidate = à prouver par un test"
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Vérification qui a tranché le tri (fichier:ligne, capture, constat)"
+    },
+    "repro_spec": {
+      "type": "string",
+      "pattern": "^tests/bugbash/.+\\.spec\\.ts$"
+    },
+    "test_title": {
+      "type": "string",
+      "minLength": 5
+    },
+    "root_cause": {
+      "type": "string",
+      "description": "fichier:ligne de la cause si le code de l'app est lisible"
+    }
+  },
+  "if": {
+    "properties": {
+      "bucket": {
+        "const": "candidate"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "repro_spec",
+      "test_title"
+    ]
+  }
+}

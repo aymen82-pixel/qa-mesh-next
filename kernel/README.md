@@ -228,6 +228,26 @@ ratés ou bloqués sans finding, parallélisme, verdict), état SQLite
 `PROGRESS.md` (`src/explore/render.ts`). Contrats `agent-explore` (livrable d'un
 charter) et `explore-report` (écrit par le kernel). Détail : `guide qa-mesh/explore`.
 
+### `findings merge` / `bugbash` — bug bash avec preuve (C4)
+
+```bash
+node kernel/dist/cli.js explore init --run <id> --goal "<périmètre>" --bugbash
+node kernel/dist/cli.js explore start --run <id> --title … --instruction … --posture <p> [--account <slug>]
+node kernel/dist/cli.js findings merge --run <id> [--threshold 0.3]   # -> bugbash/merged.json
+node kernel/dist/cli.js bugbash verify --run <id> <verify.json>       # exécute le test de repro et tranche
+node kernel/dist/cli.js bugbash report --run <id>                     # bugs_report.json + unconfirmed.json
+```
+
+- `src/bugbash/merge.ts` : même route + titres proches (Levenshtein relatif de
+  `db/distance.ts`), union-find, repro la plus courte, sévérité max.
+- `src/bugbash/verdict.ts` : **confirmé** seulement si le test, rejoué 2 fois
+  sans retry, échoue à chaque fois en `ASSERTION_FAILED` sur l'assertion
+  marquée `[BUG:<id>]` ; sinon non reproduit, instable, test invalide (2 essais)
+  ou abandonné.
+- Lecture seule imposée si `bugbash.shared_env` ; postures qui écrivent
+  refusées ; un compte jetable `bb-<slug>` par charter quand l'app en déclare.
+- Contrats `agent-bugverify`, `bugbash-bugs`, `bugbash-unconfirmed`.
+
 ### `guide` — documentation à la demande (C2)
 
 ```bash
@@ -333,6 +353,10 @@ Le kernel est ainsi invocable depuis n'importe quel emplacement du projet.
 | `src/explore/store.ts` | État d'exploration SQLite |
 | `src/explore/render.ts` | Rendu de PROGRESS.md |
 | `src/commands/explore.ts` | Commandes `explore …` |
+| `src/bugbash/merge.ts` | Fusion déterministe des findings |
+| `src/bugbash/verdict.ts` | Verdict pur d'un test de repro |
+| `src/bugbash/store.ts` | Verdicts de vérification (SQLite) |
+| `src/commands/bugbash.ts` | Commandes `findings merge`, `bugbash verify/report/status` |
 | `src/commands/guide.ts` | Commande `guide` (progressive disclosure) |
 | `src/trace/zip.ts` | Lecteur ZIP minimal (trace.zip) |
 | `src/trace/parse.ts` | Extraction pure des faits d'un trace Playwright |

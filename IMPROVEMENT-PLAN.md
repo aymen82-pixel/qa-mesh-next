@@ -1,6 +1,6 @@
 # IMPROVEMENT-PLAN - qa-mesh-next
 
-> Statut : **validé le 2026-10-07** ("pousse vers un nouveau repo GitHub et continue"). Décisions appliquées : §4.
+> Statut : **validé le 2026-10-07**, **exécuté le 2026-10-08** (C1 à C12). Décisions appliquées : §4 ; bilan : §5.
 > Références lues (lecture seule) : `_refs/qa-mesh/` @ `669d35e`, `_refs/e2e/` @ `6d5c24a`.
 
 ## 0. Constat de la phase 0
@@ -309,3 +309,27 @@ Replay cache, modèles de décision, moteur mobile, OAuth et abonnements, télé
 - Sans réponse explicite, les recommandations du plan s'appliquent : ordre proposé, plugin généré **et** commité (`plugin build --check`), `simple-input-form.spec.ts` et `seed.spec.ts` racine supprimés (`examples/` conservés comme documentation), C1 en un seul commit.
 - C5 : `ASSERTION_FAILED` = PRODUIT requalifiable avec motif. C7 (validé) : projet `setup` dans `playwright.config.ts`, Agent 0 sans connexion MCP.
 - Restent ouvertes : `trace` dans `playwright.config.ts` (C6), démo (C4), licence (C12).
+
+## 5. Bilan d'exécution (2026-10-08)
+
+| Chantier | Commit | Écart par rapport au plan |
+|---|---|---|
+| C1 Bootstrap | `chore(bootstrap)` | Playwright épinglé en 1.56.1 (navigateurs de l'environnement) |
+| C11 Contrats | `feat(contracts)` | Ajout de `qa-config.schema.json` + `config check` |
+| C5 Erreurs | `feat(errors)` | Le script de vérification est une commande kernel (`qa-mesh errors check`) et non `kernel/scripts/check-error-codes.ts` |
+| C7 Secrets | `feat(secrets)` | Ajout de `session refresh` (connexion déterministe) |
+| C6 trace.md | `feat(trace)` | - |
+| C2 Skills | `feat(skills): progressive disclosure` | Routeur unique `qa-mesh` pour l'orchestrateur ; les 4 petits skills non découpés (gain nul) |
+| C3 Explore | `feat(explore)` | `parallelism` borné 1-4 mais 1 recommandé (un seul navigateur MCP) ; pas de `@playwright/mcp` ajouté |
+| C4 Bug bash | `feat(bugbash)` | Démo sur une app locale (`demo/todo/`), `demo.playwright.dev` étant bloqué par le proxy de la session ; B-001 et B-002 confirmés par le kernel |
+| C8 aiJudge | `feat(ai-judge)` | - |
+| C9 qa-verify | `feat(skills): skill qa-verify` | - |
+| C10 Usage | `feat(usage)` | Hook dédié `qa-events.js` (les hooks existants n'écrivaient pas de JSONL) |
+| C12 Docs | `docs` (dernier commit) | Grep client documenté dans le message du commit |
+
+Dépendances : **aucune nouvelle dépendance** ajoutée (ZIP sur `node:zlib`,
+fournisseurs `aiJudge` sur `fetch`, Zod déjà présent).
+
+Restent ouverts : licence de qa-mesh-next (`package.json` garde `ISC` par
+défaut), poussée vers `aymen82-pixel/qa-mesh-next` (dépôt à créer et à
+autoriser pour la session ; un bundle git complet est fourni en attendant).

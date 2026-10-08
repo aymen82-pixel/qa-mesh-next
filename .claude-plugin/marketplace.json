@@ -7,7 +7,7 @@
     {
       "name": "qa-mesh",
       "source": "./qa-mesh-plugin",
-      "description": "Plateforme QA autonome multi-agents Playwright : agents 0-6 + orchestrateur, skills QA, hooks d'enforcement, MCP playwright-test, kernel déterministe + loops autonomes de non-régression."
+      "description": "Plateforme QA autonome multi-agents Playwright : orchestrateur + agents 0-6, exploration et bug bash avec preuve, skills QA en progressive disclosure, hooks d'enforcement, MCP playwright-test, kernel déterministe sans LLM + loops de non-régression."
     }
   ]
 }

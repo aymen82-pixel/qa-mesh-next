@@ -1,9 +1,19 @@
 {
   "name": "qa-mesh",
   "version": "2.0.0",
-  "description": "Plateforme QA autonome multi-agents pour Playwright : orchestrateur + agents 0-6, spécialistes parallèles (a11y WCAG, compliance RGPD/AI Act, performance Web Vitals/k6), chaîne SDD amont (spec writer + product owner avec checkpoint humain), skills QA, hooks d'enforcement, serveur MCP playwright-test, et kernel déterministe TypeScript (validation, AgentDB SQLite, priorisation par le risque, loops autonomes de non-régression).",
+  "description": "Plateforme QA autonome multi-agents pour Playwright : orchestrateur + agents 0-6, exploration (qa-explorer) et bug bash avec preuve par test de repro (qa-bug-verifier), spécialistes parallèles (a11y WCAG, compliance RGPD/AI Act, performance Web Vitals/k6), chaîne SDD amont, skills en progressive disclosure, hooks d'enforcement, serveur MCP playwright-test, et kernel déterministe TypeScript sans appel LLM (contrats, AgentDB SQLite, priorisation par le risque, loops, codes d'échec, trace.md, redaction des secrets, usage).",
   "author": {
     "name": "aymen82-pixel"
   },
-  "keywords": ["qa", "playwright", "testing", "multi-agents", "self-healing", "kernel", "loops"]
+  "keywords": [
+    "qa",
+    "playwright",
+    "testing",
+    "multi-agents",
+    "self-healing",
+    "kernel",
+    "loops",
+    "explore",
+    "bug-bash"
+  ]
 }

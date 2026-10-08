@@ -29,7 +29,8 @@ flowchart TD
     A4 <-->|réutilise / ajoute| DB
     A4 -->|pages/ tests/ fixtures/<br/>tsc --noEmit OK| A5[Agent 5<br/>qa-test-executor<br/>haiku]
 
-    A5 -->|execution_report.json| TRI{Classification}
+    A5 -->|rapport JSON Playwright| CLS[kernel : classify<br/>code du catalogue → classe<br/>+ trace render → trace.md]
+    CLS -->|execution_report.json| TRI{Classification}
     TRI -->|PRODUIT| BUGS[bugs_report.json]
     TRI -->|ENV| LOG[pipeline.log]
     TRI -->|SCRIPT ≥ 1| A6[Agent 6<br/>qa-healing-coordinator<br/>sonnet]
@@ -40,7 +41,49 @@ flowchart TD
     RERUN --> FIN[Clôture :<br/>coverage-memory MAJ<br/>report.json + critères succès]
 ```
 
+### 1.1 Mode explore (`/qa-explore`)
+
+```mermaid
+flowchart LR
+    G[Objectif] --> PL[qa-analyst<br/>planificateur]
+    PL -->|explore init / context| K[(kernel<br/>explore state<br/>budgets · arrêt)]
+    PL -->|charter| EX[qa-explorer<br/>Playwright MCP]
+    EX -->|agent-explore.json<br/>findings redactés| K
+    K -->|explore decide| PL
+    K -->|continue| PL
+    K -->|stop : finished / stuck ×3 / budget / temps| R[PROGRESS.md<br/>explore_report.json]
+```
+
+Le planificateur et l'explorateur sont des agents ; l'état, les budgets
+(`qa.config.json#explore`), l'arrêt après 3 charters ratés ou bloqués sans
+finding, le verdict et le rendu sont dans `kernel/src/explore/`. Démarrage
+possible depuis une session sauvegardée (`storage_state`), `known_non_bugs[]`
+injecté dans le contexte de chaque charter.
+
+### 1.2 Bug bash avec preuve (`/qa-bugbash`)
+
+```mermaid
+flowchart LR
+    P[Préparation<br/>comptes bb-slug · read_only si shared_env] --> C[Charters orientés bug<br/>qa-explorer]
+    C -->|findings| M[kernel : findings merge<br/>route + Levenshtein]
+    M -->|merged.json| V[qa-bug-verifier<br/>test de repro par finding]
+    V -->|agent-bugverify.json + spec @bugbash| J{kernel : bugbash verify<br/>2 passes, 0 retry}
+    J -->|échoue 2/2 en ASSERTION_FAILED<br/>sur l'assertion BUG:id| OK[bugs_report.json]
+    J -->|sinon| NO[unconfirmed.json<br/>avec la raison]
+```
+
+Le verdict (confirmé ou non) n'est jamais celui d'un agent : le kernel exécute le
+test et applique `judgeRepro` (`kernel/src/bugbash/verdict.ts`). Les tests de
+repro (`tests/bugbash/`, tag `@bugbash`) sont exclus de la suite normale
+(`grepInvert`) et ne tournent qu'avec `QA_BUGBASH=1`.
+
 ## 2. Principes structurants
+
+**Kernel sans LLM.** Tout ce qui est mécanique passe par `kernel/` (CLI
+`qa-mesh`) : validation des contrats, filtrage, priorisation, classification
+des échecs par code, rendu de `trace.md` et `PROGRESS.md`, état d'exploration,
+dédoublonnage des findings, verdict des tests de repro, redaction, agrégation de
+l'usage. Un agent ne tranche jamais ce qu'une règle peut trancher.
 
 **Neutralité métier.** Aucun agent ne contient de donnée projet. Tout le
 spécifique (URL, rôles, credentials via variables d'environnement, routes
@@ -66,7 +109,7 @@ n'est plus que documentaire :
 | 1+2 → 3 | parcours complets + catalogue sans sélecteurs |
 | 2/3 → 4 | index scénarios automatisables + index sélecteurs résolus AgentDB |
 | 4 → 5 | chemins des specs + commande d'exécution |
-| 5 → 6 | uniquement les échecs SCRIPT + contexte + sélecteurs candidats |
+| 5 → 6 | uniquement les échecs SCRIPT + chemin de `trace.md` + sélecteurs candidats |
 
 **Priorisation par le risque (Coverage Intelligence, étape 9).** Le kernel
 calcule un score de priorité déterministe par domaine (`qa-mesh prioritize`),
@@ -77,6 +120,20 @@ somme pondérée de 5 facteurs mesurables — risque métier (config), criticit�
 le budget de chaque agent en conséquence. C'est un module du kernel, **pas un
 agent** : un score doit être reproductible et auditable. Détails :
 `COVERAGE-INTELLIGENCE.md`.
+
+**Codes d'échec avant raisonnement.** Chaque échec reçoit un code du catalogue
+(`kernel/src/errors/catalog.ts`, 11 codes, classe PRODUIT/SCRIPT/ENV et piste de
+correction) par `qa-mesh classify`, avant tout LLM. Un code non ambigu impose sa
+classe (contrat agent-5) ; requalifier un code ambigu exige `requalified_reason`.
+`qa-healing-coordinator` ne reçoit que des codes SCRIPT. `qa-mesh errors check`
+échoue si un code est levé sans être documenté, ou documenté sans être levé.
+
+**Secrets par nom.** `qa.config.json#secrets` ne contient que des noms ; les
+valeurs sont lues dans l'environnement, redactées dans les journaux, rapports,
+`trace.md` et findings, masquées sur les captures (`mask`). La connexion se fait
+par `qa-mesh session refresh` (code Playwright), jamais par un agent via MCP.
+`qa-guard.js` bloque JWT, `Bearer …` et clés `sk-…` dans tout fichier écrit.
+Aucune télémétrie : les événements d'agents (`.qa/events/`) restent locaux.
 
 **Budgets explicites.** Tous les retries sont bornés et configurables
 (`qa.config.json#budgets`) : 2 relances max par agent, 1 passe de healing,
@@ -91,22 +148,31 @@ your-project/
 ├── .claude/
 │   ├── settings.json          # Permissions + config (committed)
 │   ├── settings.local.json    # Permissions perso (gitignored)
-│   ├── commands/              # /qa-campaign, /qa-coverage, /qa-heal
+│   ├── commands/              # /qa-campaign, /qa-coverage, /qa-heal, /qa-sdd, /qa-explore, /qa-bugbash
 │   ├── rules/                 # code-style.md, testing.md, selectors.md
-│   ├── skills/
-│   │   └── playwright-best-practices/   # pack TestDino curaté (SKILL.md + references/)
-│   └── agents/                # qa-analyst + agents 0-6
+│   ├── hooks/                 # qa-guard, loop-guard, qa-typecheck, qa-events
+│   ├── skills/                # routeurs SKILL.md courts + references/ à la demande
+│   │   ├── qa-mesh/           # routeur plateforme (kernel, contrats, loop, explore, bug-bash, debugging, secrets, tokens)
+│   │   ├── playwright-best-practices/
+│   │   └── qa-verify/ …
+│   └── agents/                # GÉNÉRÉS (qa-mesh compile) depuis agents/manifest.yaml + agents/bodies/
+├── agents/                    # manifest.yaml (source unique) + bodies/
+├── kernel/                    # CLI qa-mesh déterministe (TypeScript, node:sqlite)
+├── plugin-src/                # sources du plugin ; qa-mesh-plugin/ est GÉNÉRÉ
+├── docs/                      # errors, debugging, security, ai-judge, observability
 ├── .qa/                       # config, contrats, AgentDB, runs
-│   ├── qa.config.json         # SEULES données spécifiques projet (gitignoré si secrets)
-│   ├── contracts/             # envelope + agent-0..6 (JSON Schema)
+│   ├── qa.config.json         # SEULES données spécifiques projet (gitignoré)
+│   ├── contracts/             # envelope + payloads d'agents + rapports kernel + qa-config, fixtures/
+│   ├── events/                # événements d'agents JSONL, locaux (gitignored)
 │   ├── agentdb/               # schema.json, browser-selectors.json, coverage-memory.json
 │   │   └── sessions/          # storageState par rôle (gitignored)
 │   └── runs/{run_id}/         # livrables + pipeline.log (gitignored)
 ├── tests/                     # specs PAR FEATURE : tests/<feature>/<feature>.<flux>.spec.ts
-│   └── seed.spec.ts           # seed pour la génération
+│   ├── seed.spec.ts           # seed pour la génération (seedFile explicite côté MCP)
+│   └── bugbash/               # tests de repro @bugbash (hors suite normale)
 ├── pages/                     # POM : <nom>.page.ts ; composants dans pages/components/
 ├── fixtures/                  # pages.fixture.ts — source unique de { test, expect }
-├── utils/                     # test-data.ts, api-client.ts, helpers.ts
+├── utils/                     # test-data.ts, api-client.ts, secrets.ts, ai-judge/, qa-config.ts
 ├── examples/                  # exemples de plans de test
 ├── playwright.config.ts
 └── tsconfig.json
@@ -122,8 +188,10 @@ your-project/
 | 2 | `qa-journey-mapper` | haiku | Parcours NOM/ALT/ERR/LIMITE, factorisation parent/variantes | `user_journeys.json` |
 | 3 | `qa-test-designer` | sonnet | Gherkin, CSV Xray/Zephyr/TestRail, matrice — **à la demande** | `.feature`, CSV, matrice |
 | 4 | `qa-automation-engineer` | sonnet | Gherkin/parcours → Playwright TS, POM, fixtures, validation MCP | `pages/*`, `tests/*`, `fixtures/*` |
-| 5 | `qa-test-executor` | haiku | Exécution, classification PRODUIT/SCRIPT/ENV | `execution_report.json`, `bugs_report.json` |
-| 6 | `qa-healing-coordinator` | sonnet | Auto-réparation bornée, sélecteurs alternatifs, requalification | `healing_report.json` |
+| 5 | `qa-test-executor` | haiku | Exécution, classification par le catalogue de codes puis lecture de `trace.md` | `execution_report.json`, `bugs_report.json` |
+| 6 | `qa-healing-coordinator` | sonnet | Auto-réparation bornée des codes SCRIPT, sélecteurs alternatifs, requalification | `healing_report.json` |
+| EXP | `qa-explorer` | sonnet | Un charter d'exploration via Playwright MCP (`/qa-explore`, `/qa-bugbash`) | findings `agent-explore` |
+| BBV | `qa-bug-verifier` | sonnet | Un test de repro par finding fusionné ; verdict tranché par le kernel | spec `tests/bugbash/*` + `agent-bugverify` |
 | A11Y | `qa-a11y-auditor` | haiku | Audit accessibilité WCAG (axe-core) — **optionnel, parallèle dès l'Agent 1** | `a11y_report.json` |
 | COMP | `qa-compliance-checker` | sonnet | Indices de conformité RGPD / EU AI Act — **optionnel, parallèle dès l'Agent 1** | `compliance_report.json` |
 | PERF | `qa-perf-tester` | haiku | Web Vitals vs budgets + charge k6 (gated `perf.load.allowed`) — **optionnel, parallèle dès l'Agent 1** | `perf_report.json` |
@@ -150,6 +218,14 @@ Tous dans `.qa/contracts/` :
   partagées (priorités `C|E|M|F`, statuts `OK|KO|INS|IGN`, types
   `NOM|ALT|ERR|LIMITE`, échecs `PRODUIT|SCRIPT|ENV`)
 - `agent-0.schema.json` … `agent-6.schema.json` — payloads par agent
+- `agent-a11y`, `agent-compliance`, `agent-perf`, `agent-spec`, `agent-po` —
+  spécialistes et chaîne SDD
+- `agent-explore.schema.json` — livrable d'un charter (findings : `title`,
+  `kind`, `severity` 1-5, `expected`, `actual`, `repro_steps[]`, `route`,
+  `screenshot_path`)
+- `agent-bugverify.schema.json` — livrable du vérificateur
+- `explore-report`, `bugbash-bugs`, `bugbash-unconfirmed` — rapports écrits par
+  le kernel
 
 - `qa-config.schema.json` — configuration projet `.qa/qa.config.json`
   (`qa-mesh config check`)
@@ -163,8 +239,9 @@ précis, max 2, puis STOP avec `status: error` dans `pipeline.log`.
 
 ## 6. AgentDB — mémoire persistante
 
-Schéma complet : `.qa/agentdb/schema.json`. Implémentation par défaut :
-fichiers JSON par namespace (zéro dépendance, portable partout). Le backend est
+Schéma complet : `.qa/agentdb/schema.json`. Implémentation : SQLite intégré à
+Node (`node:sqlite`, WAL) via le kernel, zéro dépendance native ; tables
+d'exploration (`explore_*`) et de bug bash ajoutées par qa-mesh-next. Le backend est
 interchangeable (serveur MCP de mémoire, base vectorielle) sans toucher aux
 contrats.
 
@@ -179,8 +256,10 @@ Cycle de vie d'un sélecteur : découvert (Agent 1) → réutilisé (Agent 4) �
 réparé (Agent 6, ancien primaire → fallback). Le drift DOM mineur ne coûte plus
 une exploration : l'Agent 6 cherche par page + label similaire avant tout debug.
 
-Sessions : le login est exécuté une seule fois (Agent 0), persisté en
-storageState Playwright, réutilisé par 1 et 4 (`expires_at` contrôlé, TTL 24 h
+Sessions : le login est exécuté une seule fois par `qa-mesh session refresh
+--role <r>` (projet Playwright `setup`, `tests/auth.setup.ts` : le mot de passe ne
+passe jamais par le modèle), persisté en storageState Playwright, réutilisé par
+0, 1, 4 et `qa-explorer` (`expires_at` contrôlé, TTL 24 h
 par défaut). Équivalent agnostique du session-replay : aucun agent ne refait
 jamais un login si une session valide existe.
 
@@ -216,8 +295,8 @@ Deux modes d'orchestration, prévus dans la définition du QA Analyst :
 
 ## 8. Réduction des coûts tokens
 
-1. **Modèles différenciés** : 4 agents sur 7 (0, 1, 2, 5) tournent sur le
-   modèle économique — ce sont les plus volumineux en E/S.
+1. **Modèles différenciés** : les agents 0, 1, 2, 5 (et a11y, perf) tournent
+   sur le modèle économique - ce sont les plus volumineux en E/S.
 2. **Jamais de DOM brut** : snapshots d'accessibilité, éléments interactifs
    uniquement, blocs communs (nav/header/footer) déclarés une fois
    (`payload.commons`). Gain type : −60 à −70 % sur les entrées d'exploration.
@@ -235,10 +314,26 @@ Deux modes d'orchestration, prévus dans la définition du QA Analyst :
 8. **Agent 3 à la demande** : la génération Gherkin/CSV (phase la plus
    verbeuse) n'est pas dans le chemin critique automatique.
 9. **Budgets** : snapshots/page, retries, passes de healing — tout est borné.
+10. **Progressive disclosure** : chaque skill est un routeur court (< 160
+    lignes) et des `references/` lues une à une (`qa-mesh guide <skill>/<topic>`).
+    Le corps du `qa-analyst` est passé de 16,1 Ko à 11,5 Ko ; le détail des phases
+    optionnelles, des loops, de l'explore et du bug bash n'est chargé que si la
+    campagne en a besoin.
+11. **`trace.md` au lieu du trace.zip** : les agents 5 et 6 lisent une page
+    bornée (40 étapes, 50 lignes de logs, 120 lignes de snapshot).
 
 ## 9. Skills embarqués
 
-`.claude/skills/playwright-best-practices/` — sous-ensemble curaté de
+Tous suivent le modèle routeur + références (inspiré de `skills/e2e/`,
+tester-army/e2e) ; `kernel/src/commands/guide.test.ts` vérifie chaque routeur
+(< 160 lignes, liens valides, aucune référence non routée).
+
+- `qa-mesh/` — routeur de la plateforme (kernel, contrats, phases optionnelles,
+  loop, explore, bug-bash, debugging, secrets, tokens).
+- `qa-verify/` — prouver un changement par une exécution réelle, main contre
+  branche pour un correctif.
+- `qa-report-generator/`, `qa-sdd-docs/`, `qa-strategy-docs/`, `qa-test-data-factory/`.
+- `playwright-best-practices/` — sous-ensemble curaté de
 [testdino-hq/playwright-skill](https://github.com/testdino-hq/playwright-skill)
 (MIT) : golden rules + 5 références (locators, POM, fixtures, authentication,
 flaky-tests) consommées par les agents 1, 4 et 6. Pour les 65+ autres guides :
@@ -246,8 +341,9 @@ flaky-tests) consommées par les agents 1, 4 et 6. Pour les 65+ autres guides :
 
 ## 10. Recommandations
 
-**Évolutivité.** Ajouter un agent = un fichier `.md` + un schéma de contrat +
-une phase dans le QA Analyst ; rien d'autre ne bouge. Cibles naturelles : agent
+**Évolutivité.** Ajouter un agent = une entrée dans `agents/manifest.yaml` + un corps dans
+`agents/bodies/` + un schéma de contrat et ses deux fixtures + une phase dans le
+QA Analyst, puis `qa-mesh compile` ; rien d'autre ne bouge. Cibles naturelles : agent
 accessibilité (axe-core), agent visuel (screenshot diff), agent API pure
 (contrats depuis `api_calls` de l'Agent 1). Multi-projets : AgentDB est par
 repo ; pour mutualiser, exposer AgentDB comme serveur MCP partagé.
@@ -268,7 +364,10 @@ Purger `browser-selectors` des entrées non revalidées depuis > 30 jours
 (`J-NNN`) → scénario → `// @scenario` → résultat → fix.
 
 **Observabilité.** `pipeline.log` JSONL est la source unique : statuts par
-phase, retries, anomalies, durées. En CI, publier `report.json` +
+phase, retries, anomalies, durées. Côté agents, le hook `qa-events.js` écrit
+des événements sans contenu d'outil dans `.qa/events/` et `qa-mesh usage`
+agrège appels, erreurs, durée et tokens par agent et par campagne (lecture
+seule, sortie bornée). En CI, publier `report.json` +
 `execution_report.json` comme artefacts ; un dashboard se construit par simple
 agrégation des runs (`coverage-memory` donne la tendance de couverture).
 
@@ -284,8 +383,9 @@ instable — inutile de réparer des tests sur une app qui ne répond pas).
    est déclaré dans `.mcp.json` (`npx playwright run-test-mcp-server`).
 2. `cp .qa/qa.config.example.json .qa/qa.config.json` et renseigner base_url,
    rôles (variables d'environnement), routes exclues.
-3. Exporter les credentials : `QA_DEFAULT_USER`, `QA_DEFAULT_PASSWORD`, …
-4. Lancer : invoquer `qa-analyst` ou `/qa-campaign`.
+3. Exporter les credentials : `QA_DEFAULT_USER`, `QA_DEFAULT_PASSWORD`, … puis
+   `node kernel/dist/cli.js session refresh --role default`.
+4. Lancer : invoquer `qa-analyst` ou `/qa-campaign` (ou `/qa-explore`, `/qa-bugbash`).
 
 Pour réutiliser la plateforme sur un autre projet : copier `.claude/`, `.qa/`
 (sans `agentdb/sessions/` ni `runs/`), `fixtures/`, `utils/`, `tsconfig.json`

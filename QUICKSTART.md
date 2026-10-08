@@ -7,6 +7,7 @@ Les agents sont installés dans `.claude/agents/` et prêts à l'emploi.
 ```bash
 npm install
 npx playwright install
+npm --prefix kernel ci && npm --prefix kernel run build   # kernel qa-mesh (Node >= 22.5)
 ```
 
 ## 2. Configurer le projet cible
@@ -31,6 +32,7 @@ export QA_DEFAULT_USER=user@example.com QA_DEFAULT_PASSWORD=********
 ```
 
 Jamais de credentials en dur — tout passe par `utils/test-data.ts` + env.
+Puis créer la session du rôle : `node kernel/dist/cli.js session refresh --role default`.
 
 ## 4. Lancer une campagne complète
 
@@ -51,6 +53,10 @@ healing (Agent 6 si nécessaire).
 |---|---|
 | Voir les zones non couvertes sans rien générer | `/qa-coverage` |
 | Réparer des tests cassés | `/qa-heal` ou `/qa-heal tests/<feature>/` |
+| Explorer une app vers un objectif, sans test écrit | `/qa-explore "<objectif>"` |
+| Chasser les bugs et ne garder que ceux prouvés par un test | `/qa-bugbash "<périmètre>"` |
+| Comprendre un échec | `node kernel/dist/cli.js trace render --run <id> --report <json>` puis lire `trace.md` |
+| Coût par agent d'une campagne | `node kernel/dist/cli.js usage --run <id>` |
 | Livrables manuels (Gherkin + CSV Xray) | demander explicitement l'Agent 3 : « Génère les cas de test manuels du domaine X » |
 
 ## 5. Exécuter et vérifier
@@ -66,7 +72,9 @@ npm run report          # rapport HTML Playwright
 
 - Tests générés : `tests/<feature>/<feature>.<flux>.spec.ts`
 - Page objects : `pages/`, fixtures : `fixtures/pages.fixture.ts`
-- Livrables de campagne (JSON + log) : `.qa/runs/{run_id}/`
+- Livrables de campagne (JSON + log) : `.qa/runs/{run_id}/` ; exploration et
+  bug bash : `explore/PROGRESS.md`, `bugbash/bugs_report.json`, `bugbash/unconfirmed.json`
+- Tests de repro du bug bash : `tests/bugbash/` (lancés seulement avec `QA_BUGBASH=1`)
 - Mémoire persistante (sélecteurs, sessions, couverture) : `.qa/agentdb/`
 - Exemples de plans de test : `examples/test-plans/`
 

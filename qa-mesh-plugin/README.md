@@ -7,11 +7,11 @@ sur **n'importe quel projet d'automatisation** sans copier de fichiers.
 
 | Composant | Détail |
 |---|---|
-| `agents/` | `qa-analyst` (orchestrateur) + agents 0–6 + spécialistes parallèles (`qa-a11y-auditor`, `qa-compliance-checker`, `qa-perf-tester`) + chaîne SDD amont (`qa-spec-writer`, `qa-product-owner`) |
-| `commands/` | `/qa-campaign`, `/qa-coverage`, `/qa-heal`, `/qa-sdd` |
-| `skills/` | `playwright-best-practices`, `qa-test-data-factory`, `qa-strategy-docs`, `qa-report-generator`, `qa-sdd-docs` |
-| `kernel/` | CLI TypeScript déterministe (validation de contrats, AgentDB SQLite, priorisation par le risque, **loops autonomes**) — voir `kernel/README.md`. À builder une fois dans le projet cible (§ installation). |
-| `hooks/` | `qa-guard.js` (PreToolUse : bloque `waitForTimeout`, `networkidle`, `test.only`, URL/credentials en dur) · `qa-typecheck.js` (PostToolUse : `npm run typecheck` après toute écriture `.ts`) · `loop-guard.js` (PreToolUse : bloque toute écriture hors de la whitelist d'un loop actif) |
+| `agents/` | `qa-analyst` (orchestrateur) + agents 0-6 + `qa-explorer` et `qa-bug-verifier` + spécialistes parallèles (`qa-a11y-auditor`, `qa-compliance-checker`, `qa-perf-tester`) + chaîne SDD amont (`qa-spec-writer`, `qa-product-owner`) |
+| `commands/` | `/qa-campaign`, `/qa-coverage`, `/qa-heal`, `/qa-sdd`, `/qa-explore`, `/qa-bugbash` |
+| `skills/` | `qa-mesh` (routeur), `qa-verify`, `playwright-best-practices`, `qa-test-data-factory`, `qa-strategy-docs`, `qa-report-generator`, `qa-sdd-docs` |
+| `kernel/` | CLI TypeScript déterministe (contrats, AgentDB SQLite, priorisation, loops, explore, bug bash, codes d'échec, `trace.md`, redaction, usage, guide) — voir `kernel/README.md`. À builder une fois dans le projet cible (§ installation). |
+| `hooks/` | `qa-guard.js` (PreToolUse : bloque `waitForTimeout`, `networkidle`, `test.only`, URL/credentials en dur, JWT/`Bearer`/`sk-`, `aiJudge` seul) · `qa-typecheck.js` (PostToolUse : `npm run typecheck` après toute écriture `.ts`) · `loop-guard.js` (PreToolUse : bloque toute écriture hors de la whitelist d'un loop actif) · `qa-events.js` (événements locaux pour `qa-mesh usage`) |
 | `.mcp.json` | serveur MCP `playwright-test` (`npx playwright run-test-mcp-server`) |
 | `templates/.qa/` | contrats JSON, `routing.yaml`, `qa.config.example.json`, schéma AgentDB — à copier une fois dans le projet cible |
 

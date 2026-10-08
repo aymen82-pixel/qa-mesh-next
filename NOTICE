@@ -18,7 +18,9 @@ NOTICE d'origine, reproduit tel quel :
 
 Aucun code ni paquet npm de e2e n'est embarqué : les patterns ci-dessous sont
 réimplémentés sur @playwright/test et le kernel qa-mesh. Fichiers dérivés,
-avec leur source (révision 6d5c24a) et la nature de la modification :
+avec leur source (révision 6d5c24a) et la nature de la modification. Les
+copies générées de ces fichiers sous qa-mesh-plugin/ sont couvertes par la
+même ligne :
 
 | Fichier qa-mesh-next | Source e2e | Modification |
 | --- | --- | --- |
@@ -26,8 +28,8 @@ avec leur source (révision 6d5c24a) et la nature de la modification :
 | kernel/src/errors/catalog.ts | docs/reference/errors.mdx | Principe « code + classe + piste, jamais choisi par un modèle » ; codes et classes PRODUIT/SCRIPT/ENV propres à qa-mesh |
 | docs/errors.md | docs/reference/errors.mdx, skills/e2e/references/debugging.md | Structure de la référence d'erreurs, réécrite en français pour qa-mesh |
 | kernel/src/secrets/redact.ts | docs/security.mdx (Redaction) | Règles de redaction reprises (formes échappées, casse, espaces, préfixe tronqué, valeur < 6 refusée), implémentation propre |
-| docs/security.md, utils/secrets.ts | docs/security.mdx | Structure et limites (« où la redaction s'arrête »), adaptées à Playwright MCP et au masquage de captures |
-| kernel/src/trace/render.ts, docs/debugging.md | docs/debugging.mdx, skills/e2e/references/debugging.md | Structure de la page trace.md (code, étapes, journal app plafonné erreurs d'abord, écran à l'échec), reconstruite sur le trace.zip de Playwright |
+| docs/security.md, utils/secrets.ts, .claude/skills/qa-mesh/references/secrets.md | docs/security.mdx | Structure et limites (« où la redaction s'arrête »), adaptées à Playwright MCP et au masquage de captures |
+| kernel/src/trace/render.ts, docs/debugging.md, .claude/skills/qa-mesh/references/debugging.md | docs/debugging.mdx, skills/e2e/references/debugging.md | Structure de la page trace.md (code, étapes, journal app plafonné erreurs d'abord, écran à l'échec), reconstruite sur le trace.zip de Playwright |
 | kernel/src/commands/guide.ts, .claude/skills/qa-mesh/SKILL.md | skills/e2e/SKILL.md, `e2e guide` | Modèle « routeur court + table Topic / Fichier / À lire quand + références à la demande » et commande guide, contenu propre à qa-mesh |
 | kernel/src/explore/state.ts, agents/bodies/qa-explorer.md, .claude/skills/qa-mesh/references/explore.md, .claude/commands/qa-explore.md | skills/e2e/references/explore.md, docs/explore.mdx | Boucle planner/charter/findings, budgets et plages, arrêt après 3 charters ratés ou bloqués sans finding, verdict et forme d'un finding, réimplémentés sur Playwright MCP et le kernel |
 | utils/ai-judge/, docs/ai-judge.md | skills/e2e/references/agent.md (assert, judgments) | Jugement borné : réponse au schéma, une réparation puis échec, « inconclusive » = échec, toujours apparié à une vérification déterministe ; implémentation propre sur fetch + Zod |

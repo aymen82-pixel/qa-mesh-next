@@ -1,13 +1,19 @@
 # Plateforme QA Autonome — Instructions équipe
 
-Plateforme de test multi-agents agnostique au métier : 7 agents spécialisés
+Plateforme de test multi-agents agnostique au métier : 14 agents spécialisés
 orchestrés par `qa-analyst` produisent couverture, parcours, scénarios, tests
-Playwright, exécution et auto-réparation.
+Playwright, exécution, auto-réparation, exploration et bug bash prouvé par test
+de repro. Le travail mécanique est fait par le kernel `qa-mesh`, sans LLM.
+Règles de contribution (contrats, invariants, pièges) : `AGENTS.md`.
 
 ## Structure du projet
 
 ```
-.claude/            # agents (qa-analyst + 0–6 + spécialistes a11y/compliance), skills, commands, rules, hooks, settings.json
+.claude/            # agents GÉNÉRÉS, skills (routeur + references/), commands, rules, hooks, settings.json
+agents/             # manifest.yaml (source unique des agents) + bodies/
+kernel/             # CLI qa-mesh déterministe (node kernel/dist/cli.js --help)
+docs/               # errors, debugging, security, ai-judge, observability
+demo/todo/          # app de démo locale (bugs plantés) + preuves explore / bug bash
 .claude-plugin/     # marketplace.json — ce repo est installable comme plugin
 qa-mesh-plugin/     # plugin distribuable GÉNÉRÉ (`qa-mesh plugin build`) — ne jamais l'éditer à la main
 plugin-src/         # sources propres au plugin (plugin.json, README, hooks.json)
@@ -40,7 +46,8 @@ ARCHITECTURE.md     # architecture détaillée des agents, diagramme, stratégie
 ## Lancer une campagne QA
 
 1. `cp .qa/qa.config.example.json .qa/qa.config.json` puis renseigner base_url et rôles.
-2. Exporter les credentials (`QA_DEFAULT_USER`, `QA_DEFAULT_PASSWORD`, …).
+2. Exporter les credentials (`QA_DEFAULT_USER`, `QA_DEFAULT_PASSWORD`, …) puis
+   `node kernel/dist/cli.js session refresh --role default`.
 3. Invoquer l'agent `qa-analyst` (ou `/qa-campaign`). Phases : couverture →
    découverte → parcours → [conception sur demande] → automatisation →
    exécution → healing. Détails : `ARCHITECTURE.md`.
@@ -49,4 +56,8 @@ ARCHITECTURE.md     # architecture détaillée des agents, diagramme, stratégie
 
 - `npm test` — suite complète ; `npm run test:chromium` — un seul navigateur
 - `npm run typecheck` — validation TS sans émission
-- `/qa-campaign`, `/qa-coverage`, `/qa-heal` — workflows agents
+- `/qa-campaign`, `/qa-coverage`, `/qa-heal`, `/qa-sdd`, `/qa-explore`, `/qa-bugbash` — workflows agents
+- `node kernel/dist/cli.js guide qa-mesh/<topic>` — lire UN topic de doc (kernel,
+  contracts, loop, explore, bug-bash, debugging, secrets, tokens)
+- Diagnostiquer un échec : `classify` puis `trace render`, lire `trace.md`
+- Avant de déclarer une tâche finie : skill `qa-verify` (exécution réelle)

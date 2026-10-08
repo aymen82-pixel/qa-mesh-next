@@ -1,9 +1,17 @@
 # qa-mesh-next — Plateforme QA autonome Playwright multi-agents
 
 Plateforme de test agnostique au métier : un orchestrateur (`qa-analyst`) pilote
-7 agents spécialisés pour découvrir les zones non couvertes, explorer
+14 agents spécialisés pour découvrir les zones non couvertes, explorer
 l'application, générer parcours et scénarios, automatiser en Playwright
-(POM/TypeScript), exécuter et auto-réparer les tests — avec un coût LLM minimal.
+(POM/TypeScript), exécuter et auto-réparer les tests, explorer librement une
+application et chasser les bugs en ne gardant que ceux prouvés par un test qui
+échoue - avec un coût LLM minimal : tout ce qui est mécanique (validation,
+classification des échecs, dédoublonnage, verdicts, rendu) est fait par un
+kernel Node déterministe, sans appel LLM.
+
+qa-mesh-next reprend qa-mesh et y intègre, réimplémentés sur `@playwright/test`,
+des patterns de [tester-army/e2e](https://github.com/tester-army/e2e)
+(Apache-2.0, voir [NOTICE](NOTICE)). Historique : [CHANGELOG.md](CHANGELOG.md).
 
 Compatible Claude Code, OpenCode, Codex, GitHub Copilot Agent Mode, Gemini CLI
 et tout environnement MCP.
@@ -180,6 +188,72 @@ cat loops/checkout-regression/PROGRESS.md                 # historique lisible, 
 | Re-tester un module précis après un échec CI ou une correction | `loop verify` / `loop decide` sur un loop existant |
 | Non-régression périodique sur un module sensible | Loop dédié, relancé régulièrement |
 
+### Étape 9 - Explorer une application sans test écrit (`/qa-explore`)
+
+Pour découvrir ce qui cloche sur un écran ou un parcours, sans avoir écrit de
+test, donnez un **objectif** :
+
+```
+/qa-explore "vérifier qu'on peut ajouter, cocher et supprimer des tâches"
+```
+
+L'orchestrateur découpe l'objectif en **charters** (petites missions), l'agent
+`qa-explorer` en exécute un à la fois dans un vrai navigateur (Playwright MCP),
+et le kernel tient l'état, les budgets et l'arrêt. Chaque anomalie devient un
+**finding** (titre, attendu, observé, étapes de repro, capture). Résultat dans
+`.qa/runs/<id>/explore/` : `PROGRESS.md` (lisible) et `explore_report.json`.
+
+Réglages utiles dans `qa.config.json` :
+- `explore` : budgets (nombre de charters, actions par charter, durée max) ;
+  l'exploration s'arrête seule après 3 charters ratés d'affilée sans finding.
+- `known_non_bugs` : comportements voulus, pour éviter les faux positifs.
+
+### Étape 10 - Bug bash avec preuve (`/qa-bugbash`)
+
+Un bug bash lance plusieurs charters orientés « casser l'application », fusionne
+les findings en double, puis l'agent `qa-bug-verifier` écrit pour chacun un
+**test de repro** Playwright. C'est le **kernel** qui tranche : un bug n'est
+confirmé que si ce test échoue, deux fois de suite, sur l'assertion annoncée.
+
+```
+/qa-bugbash "le panier et le paiement"
+```
+
+- `bugs_report.json` : uniquement les bugs **prouvés**, chacun avec son test
+  (`tests/bugbash/b-NNN.spec.ts`, exclu de la suite normale).
+- `unconfirmed.json` : le reste (non reproduit, instable, test invalide), avec la raison.
+- Environnement partagé avec d'autres personnes : mettez
+  `"bugbash": { "shared_env": true }` - le kernel impose alors la lecture seule
+  (pas d'inscription, pas de soumission, pas d'injection dans les URL).
+- Comptes jetables : déclarez des rôles `bb-<slug>` dans `roles[]` (un par charter).
+
+Démonstration complète sur une application de démo locale : `demo/todo/`
+(deux bugs plantés, tous deux prouvés ; preuves dans `demo/todo/evidence/`).
+
+### Étape 11 - Comprendre un échec
+
+```bash
+node kernel/dist/cli.js classify --report <rapport-json-playwright>          # code d'échec + classe
+node kernel/dist/cli.js trace render --run <id> --report <rapport-json-playwright>
+```
+
+Le rapport JSON s'obtient avec `npx playwright test --reporter=json > report.json`
+(l'agent `qa-test-executor` le fait pour vous pendant une campagne).
+
+Chaque échec reçoit un **code** du catalogue (`LOCATOR_NOT_FOUND`, `NAV_TIMEOUT`,
+`ASSERTION_FAILED`…) et une classe PRODUIT / SCRIPT / ENV avant tout
+raisonnement LLM (liste : [docs/errors.md](docs/errors.md)). `trace render`
+écrit une page `trace.md` par test en échec : étapes, code, logs console et
+réseau utiles, écran au moment de l'échec ([docs/debugging.md](docs/debugging.md)).
+
+### Étape 12 - Options avancées
+
+- **Sorties GenAI / RAG** : fixture `aiJudge`, désactivée par défaut, toujours
+  combinée à une assertion déterministe ([docs/ai-judge.md](docs/ai-judge.md)).
+- **Coût des agents** : `node kernel/dist/cli.js usage --run <id>` (appels
+  d'outils, durée, tokens par agent ; tout reste local) - [docs/observability.md](docs/observability.md).
+- **Prouver un changement de la plateforme** : skill `qa-verify`.
+
 ### En cas de souci
 
 | Symptôme | Cause probable / solution |
@@ -189,6 +263,8 @@ cat loops/checkout-regression/PROGRESS.md                 # historique lisible, 
 | Connexion échoue | Vérifier `base_url`, `auth.steps` et les variables d'environnement (étape 3). |
 | Aucun test généré | Vérifier que `coverage_gaps` n'est pas vide (l'app est peut-être déjà couverte). |
 | Tests « flaky » | Ne jamais augmenter un timeout à l'aveugle — voir `.claude/rules/testing.md`. |
+| Écriture bloquée par `qa-guard` (JWT, `Bearer`, `sk-…`) | Un secret en clair : le déclarer par son nom dans `qa.config.json#secrets` et passer par la fixture `secrets` (étape 3). |
+| Un test a échoué, pourquoi ? | `node kernel/dist/cli.js classify` puis `trace render` (étape 11) : lire `trace.md`, pas le trace.zip. |
 | Écriture bloquée par `loop-guard` | Le fichier est hors de la `whitelist` d'un loop actif (étape 8) — élargissez `loops/<id>/loop.yaml` (toujours modifiable) ou attendez que le loop passe à `done`. |
 
 ## Documentation à la demande
@@ -201,17 +277,23 @@ un topic (kernel, contracts, loop, debugging, secrets…).
 
 ```
 .claude/
-├── agents/        qa-analyst (orchestrateur) + agents 0–6
-├── skills/        playwright-best-practices (pack TestDino curaté)
-├── commands/      /qa-campaign, /qa-coverage, /qa-heal
+├── agents/        GÉNÉRÉS depuis agents/manifest.yaml + agents/bodies/
+├── skills/        qa-mesh (routeur), playwright-best-practices, qa-verify, qa-report-generator, …
+├── commands/      /qa-campaign, /qa-coverage, /qa-heal, /qa-sdd, /qa-explore, /qa-bugbash
+├── hooks/         qa-guard, loop-guard, qa-typecheck, qa-events
 ├── rules/         code-style, testing, selectors
-└── settings.json  permissions
-.qa/               config projet, contrats qa-mesh, AgentDB (mémoire persistante)
+└── settings.json  permissions et hooks
+agents/            manifest.yaml (source unique) + bodies/
+kernel/            CLI déterministe qa-mesh (contrats, AgentDB, explore, bug bash, erreurs, trace, secrets, usage)
+plugin-src/        sources propres au plugin ; qa-mesh-plugin/ est GÉNÉRÉ
+.qa/               config projet, contrats + fixtures, AgentDB (mémoire persistante)
+docs/              errors, debugging, security, ai-judge, observability
+demo/todo/         application de démo locale (bugs plantés) + preuves explore / bug bash
 tests/             specs par feature : tests/<feature>/<feature>.<flux>.spec.ts
 pages/             Page Object Model (une classe par page)
 fixtures/          pages.fixture.ts — source unique de { test, expect } ET de apiRequest
 schemas/           schémas Zod des réponses API, par domaine : schemas/<domaine>/<ressource>.schema.ts
-utils/             test-data.ts (credentials via env), api-client.ts, helpers.ts
+utils/             test-data.ts, api-client.ts, secrets.ts (SecretVault), ai-judge/, qa-config.ts
 examples/          exemples de plans de test
 ```
 
@@ -257,8 +339,12 @@ Règles :
 | `qa-journey-mapper` (2) | Parcours NOM/ALT/ERR/LIMITE |
 | `qa-test-designer` (3) | Gherkin + CSV Xray/Zephyr/TestRail — à la demande |
 | `qa-automation-engineer` (4) | Scénarios → Playwright TS avec POM et fixtures |
-| `qa-test-executor` (5) | Exécution, classification PRODUIT/SCRIPT/ENV |
-| `qa-healing-coordinator` (6) | Auto-réparation bornée, sélecteurs alternatifs |
+| `qa-test-executor` (5) | Exécution, classification PRODUIT/SCRIPT/ENV par le catalogue de codes, puis lecture de `trace.md` |
+| `qa-healing-coordinator` (6) | Auto-réparation bornée des échecs de classe SCRIPT uniquement |
+| `qa-explorer` | Un charter d'exploration via Playwright MCP, findings au contrat `agent-explore` |
+| `qa-bug-verifier` | Un test de repro par finding ; le kernel décide confirmé / non confirmé |
+| `qa-a11y-auditor`, `qa-compliance-checker`, `qa-perf-tester` | Spécialistes optionnels (WCAG, RGPD/AI Act, Web Vitals/k6) |
+| `qa-spec-writer`, `qa-product-owner` | Chaîne SDD amont (brief → SFD → user stories) |
 
 ## Commandes
 
@@ -272,4 +358,5 @@ npm run plugin:check   # échoue si qa-mesh-plugin/ a dérivé des sources
 ```
 
 Documentation complète : [ARCHITECTURE.md](ARCHITECTURE.md) ·
-Instructions agents : [CLAUDE.md](CLAUDE.md)
+Instructions Claude Code : [CLAUDE.md](CLAUDE.md) ·
+Règles de contribution (contrats, invariants, pièges) : [AGENTS.md](AGENTS.md)

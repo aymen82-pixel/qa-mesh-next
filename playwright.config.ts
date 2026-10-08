@@ -27,8 +27,9 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')` — jamais d'URL en dur dans les tests */
     baseURL: process.env.BASE_URL || 'http://localhost:3000',
 
-    /* Collect trace when retrying the failed test */
-    trace: 'on-first-retry',
+    /* Trace conservée pour chaque échec : source de `qa-mesh trace render`
+       (.qa/runs/<id>/results/<test>/trace.md), lue par les Agents 5 et 6. */
+    trace: 'retain-on-failure',
 
     /* Screenshot on failure */
     screenshot: 'only-on-failure',

@@ -84,6 +84,11 @@
               },
               "suggested_fix": {
                 "type": "string"
+              },
+              "trace_path": {
+                "type": "string",
+                "pattern": "^\\.qa/runs/.+/results/.+/trace\\.md$",
+                "description": "Page produite par `qa-mesh trace render` ; seule source de diagnostic lue par les Agents 5 et 6 (jamais le trace.zip brut)."
               }
             },
             "allOf": [

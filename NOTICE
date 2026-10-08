@@ -27,6 +27,7 @@ avec leur source (révision 6d5c24a) et la nature de la modification :
 | docs/errors.md | docs/reference/errors.mdx, skills/e2e/references/debugging.md | Structure de la référence d'erreurs, réécrite en français pour qa-mesh |
 | kernel/src/secrets/redact.ts | docs/security.mdx (Redaction) | Règles de redaction reprises (formes échappées, casse, espaces, préfixe tronqué, valeur < 6 refusée), implémentation propre |
 | docs/security.md, utils/secrets.ts | docs/security.mdx | Structure et limites (« où la redaction s'arrête »), adaptées à Playwright MCP et au masquage de captures |
+| kernel/src/trace/render.ts, docs/debugging.md | docs/debugging.mdx, skills/e2e/references/debugging.md | Structure de la page trace.md (code, étapes, journal app plafonné erreurs d'abord, écran à l'échec), reconstruite sur le trace.zip de Playwright |
 | kernel/src/contracts.fixtures.test.ts, AGENTS.md (section Contrats) | AGENTS.md (section Contracts) | Règle « une fixture valide + une invalide par schéma, schéma + fixtures + producteur dans la même revue », adaptée aux contrats qa-mesh |
 
 ------------------------------------------------------------------------------

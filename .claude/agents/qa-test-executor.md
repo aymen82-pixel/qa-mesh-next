@@ -48,12 +48,19 @@ uniquement.
      entre PRODUIT et SCRIPT → `SCRIPT` (le healing tranchera).
    Destinations : `PRODUIT` → `bugs_report.json` ; `SCRIPT` → Agent 6 ;
    `ENV` → consigner, ne pas réparer.
-4. Pour tout échec `LOCATOR_NOT_FOUND` : demander au kernel le
+4. **Page de diagnostic par échec** :
+   `qa-mesh trace render --run {run_id} --report .qa/runs/{run_id}/playwright.json --json`
+   écrit `.qa/runs/{run_id}/results/<test>/trace.md` (étapes, code, journal de
+   l'application, snapshot d'accessibilité, secrets redactés). Renseigner
+   `failure.trace_path` ; pour requalifier un code ambigu, lire CETTE page,
+   jamais le `trace.zip` brut.
+5. Pour tout échec `LOCATOR_NOT_FOUND` : demander au kernel le
    sélecteur le plus proche (requête déterministe, pas de lecture LLM du JSON) —
    `qa-mesh db similar --domain <d> --page <p> --label <l> --top 1 --json` —
    et inclure le candidat dans `suggested_fix` (avec la piste du code).
-5. Bug report compact (PRODUIT uniquement) :
-   `{ id, title, severity: C|E|M|F, steps[], expected, actual, evidence_path, scenario_id, suggested_fix }`.
+6. Bug report compact (PRODUIT uniquement) :
+   `{ id, title, severity: C|E|M|F, steps[], expected, actual, evidence_path, scenario_id, suggested_fix }`
+   (`evidence_path` = la page `trace.md`).
 
 ## Livrable (contrat agent-5.schema.json)
 
@@ -85,5 +92,5 @@ uniquement.
 - Ne jamais modifier un test : l'exécution est en lecture seule sur le code.
 - Crash du runner (exit code sans rapport JSON) → `status: error` avec la
   sortie stderr tronquée aux 50 dernières lignes.
-- Captures/traces : référencer les chemins produits par Playwright,
+- Captures/traces : référencer les chemins (`trace_path`, attachments),
   ne jamais inliner d'images ou de traces dans le JSON.

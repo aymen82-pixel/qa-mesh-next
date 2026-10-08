@@ -211,6 +211,17 @@ déterministes (`src/errors/classify.ts`) testées sur des messages réels de
 Playwright (`src/errors/fixtures/`). `errors check` tourne aussi dans
 `npm --prefix kernel test`. Détail : `docs/errors.md`.
 
+### `trace render` — page `trace.md` par test en échec (C6)
+
+```bash
+node kernel/dist/cli.js trace render --run <run_id> --report <playwright.json> [--json]
+```
+
+Lecteur ZIP zéro dépendance (`src/trace/zip.ts`, node:zlib), extraction des
+étapes, de la console, des erreurs de page et des requêtes 4xx/5xx
+(`src/trace/parse.ts`), rendu borné et redacté (`src/trace/render.ts`).
+Détail : `docs/debugging.md`.
+
 ### `secrets` / `redact` / `session refresh` — secrets (C7)
 
 ```bash
@@ -289,6 +300,10 @@ Le kernel est ainsi invocable depuis n'importe quel emplacement du projet.
 | `src/errors/check.ts` | Vérification de cohérence de la taxonomie |
 | `src/commands/classify.ts` | Commande `classify` (rapport JSON Playwright) |
 | `src/commands/errors.ts` | Commandes `errors list/check` |
+| `src/trace/zip.ts` | Lecteur ZIP minimal (trace.zip) |
+| `src/trace/parse.ts` | Extraction pure des faits d'un trace Playwright |
+| `src/trace/render.ts` | Rendu pur et borné de trace.md |
+| `src/commands/trace.ts` | Commande `trace render` |
 | `src/secrets/redact.ts` | Redaction pure (partagée avec utils/secrets.ts) |
 | `src/secrets/project.ts` | Redacteur du projet (config + environnement) |
 | `src/commands/secrets.ts` | Commandes `secrets list` et `redact` |

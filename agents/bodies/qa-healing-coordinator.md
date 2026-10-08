@@ -22,8 +22,10 @@ Pour le diagnostic des tests flaky, appliquer la taxonomie du skill
 
 ## Workflow par test (MAXIMUM 3 tentatives par test, 1 passe globale)
 
-1. `test_debug` sur le test en échec ; à la pause sur erreur :
-   snapshot + console + réseau pour comprendre le contexte.
+1. Lire `failure.trace_path` (page `trace.md` : étapes, ligne fautive, journal
+   de l'application, snapshot d'accessibilité à l'échec). C'est la source de
+   diagnostic : jamais le `trace.zip` brut. `test_debug` seulement si la page
+   ne suffit pas (état intermédiaire à observer).
 2. **Diagnostic** — partir de `failure.code` (`LOCATOR_NOT_FOUND`,
    `LOCATOR_AMBIGUOUS` → sélecteur ; `ACTION_FAILED`, `TEST_TIMEOUT` → timing ou
    état ; `ASSERTION_FAILED` requalifié → assertion périmée) ; cause racine parmi :

@@ -71,3 +71,6 @@ CLAUDE.local.md
 
 # Événements des hooks (observabilité locale, C10)
 .qa/events/
+
+# Brouillons locaux
+.tmp-*/

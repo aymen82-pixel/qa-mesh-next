@@ -30,11 +30,13 @@ const runner = (status: string, write = true): SetupRunner => ({ env }) => {
 
 test("refresh : connexion réussie -> session enregistrée avec TTL de la config", () => {
   const qaDir = project();
-  const out = runSessionRefresh({ role: "admin", qaDir, env: ENV, runner: runner("expected"), json: true, now: () => new Date("2026-10-08T10:00:00Z") });
+  // Horloge réelle : AgentDb.getSession ne rend que les sessions non expirées.
+  const now = new Date();
+  const out = runSessionRefresh({ role: "admin", qaDir, env: ENV, runner: runner("expected"), json: true, now: () => now });
   assert.equal(out.exitCode, 0, out.stdout);
   const res = JSON.parse(out.stdout);
   assert.equal(res.storage_state_path, ".qa/agentdb/sessions/admin.json");
-  assert.equal(res.expires_at, "2026-10-08T12:00:00.000Z");
+  assert.equal(res.expires_at, new Date(now.getTime() + 2 * 3600_000).toISOString());
   const db = AgentDb.open(join(qaDir, "agentdb", "agentdb.sqlite"));
   try {
     assert.equal((db.getSession("admin") as { storage_state_path: string }).storage_state_path, ".qa/agentdb/sessions/admin.json");

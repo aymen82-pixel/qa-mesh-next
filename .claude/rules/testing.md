@@ -24,4 +24,5 @@
 - Tests flaky : diagnostiquer (taxonomie du skill `playwright-best-practices`,
   `references/flaky-tests.md`) ; quarantaine `test.fixme()` + raison + ticket,
   jamais d'augmentation aveugle de timeout.
-- Retries : 2 en CI, 0 en local ; traces `on-first-retry`.
+- Retries : 2 en CI, 0 en local ; traces `retain-on-failure`. Diagnostiquer un
+  échec depuis `trace.md` (`qa-mesh trace render`), jamais depuis le trace.zip brut.

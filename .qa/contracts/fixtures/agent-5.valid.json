@@ -27,7 +27,8 @@
           "line": 21,
           "message": "locator.click: Timeout 5000ms exceeded",
           "evidence_path": "test-results/r2/trace.zip",
-          "code": "LOCATOR_NOT_FOUND"
+          "code": "LOCATOR_NOT_FOUND",
+          "trace_path": ".qa/runs/2026-10-07-001/results/tc-002-saisie-vide-1a2b3c4d/trace.md"
         }
       },
       {

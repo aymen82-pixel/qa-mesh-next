@@ -28,12 +28,17 @@ export interface ClassifiedTest extends Classification {
   title: string;
   project: string;
   status: string;
+  durationMs?: number;
+  /** Ligne de l'erreur (`errorLocation` du rapport), chemin tel que rapporté. */
+  errorLocation?: { file: string; line: number };
   /** Attachments utiles au diagnostic (trace, error-context, screenshot). */
   attachments: { name: string; path: string }[];
 }
 
 interface PwResult {
   status: string;
+  duration?: number;
+  errorLocation?: { file: string; line: number };
   errors?: { message?: string }[];
   error?: { message?: string };
   attachments?: { name: string; path?: string }[];
@@ -57,6 +62,7 @@ interface PwSuite {
 }
 
 /** Parcourt les suites imbriquées ; ne retient que les tests finalement en échec. */
+/** Exportée pour `trace render`. */
 export function classifyReport(report: { suites?: PwSuite[] }, loginUrl?: string): {
   failures: ClassifiedTest[];
   flaky: number;
@@ -79,6 +85,8 @@ export function classifyReport(report: { suites?: PwSuite[] }, loginUrl?: string
           title: [...here, spec.title].filter(Boolean).join(" › "),
           project: t.projectName ?? "",
           status: last.status,
+          ...(last.duration != null ? { durationMs: last.duration } : {}),
+          ...(last.errorLocation ? { errorLocation: { file: last.errorLocation.file, line: last.errorLocation.line } } : {}),
           attachments: (last.attachments ?? [])
             .filter((a) => a.path && ["trace", "error-context", "screenshot"].includes(a.name))
             .map((a) => ({ name: a.name, path: a.path! })),
@@ -92,7 +100,7 @@ export function classifyReport(report: { suites?: PwSuite[] }, loginUrl?: string
   return { failures, flaky };
 }
 
-function configLoginUrl(qaDir: string | undefined): string | undefined {
+export function configLoginUrl(qaDir: string | undefined): string | undefined {
   try {
     const dir = qaDir ?? findQaDir();
     const file = join(dir, "qa.config.json");

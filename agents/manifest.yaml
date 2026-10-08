@@ -118,6 +118,28 @@ agents:
       - mcp__playwright-test__browser_navigate
       - mcp__playwright-test__browser_snapshot
       - mcp__playwright-test__browser_evaluate
+  qa-explorer:
+    description: Agent EXPLORE — Explorateur. À utiliser pour mener UN charter d'exploration (un objectif, une zone, une posture) dans l'application via Playwright MCP et rapporter les défauts observés avec preuve, sans test écrit. Lancé par le planificateur (qa-analyst) en mode explore ou bug bash ; le kernel tient l'état, les budgets et le verdict. Exemples - <example>Context: le planificateur a ouvert le charter 2 « panier, posture chiffres et textes ». assistant: 'Je lance qa-explorer sur ce charter avec le contexte du kernel ; il rendra charter-2.json.'</example><example>user: 'Explore la page de paiement et dis-moi ce qui cloche' assistant: 'Mode explore : qa-explorer mène les charters planifiés et rapporte des findings, que le kernel agrège.'</example>
+    model: sonnet
+    color: green
+    tools:
+      - Read
+      - Write
+      - Bash
+      - mcp__playwright-test__browser_navigate
+      - mcp__playwright-test__browser_navigate_back
+      - mcp__playwright-test__browser_snapshot
+      - mcp__playwright-test__browser_click
+      - mcp__playwright-test__browser_type
+      - mcp__playwright-test__browser_press_key
+      - mcp__playwright-test__browser_select_option
+      - mcp__playwright-test__browser_hover
+      - mcp__playwright-test__browser_handle_dialog
+      - mcp__playwright-test__browser_wait_for
+      - mcp__playwright-test__browser_set_storage_state
+      - mcp__playwright-test__browser_take_screenshot
+      - mcp__playwright-test__browser_console_messages
+      - mcp__playwright-test__browser_network_requests
   qa-healing-coordinator:
     description: Agent 6 — Coordinateur d'auto-réparation. Extension du playwright-test-healer. À utiliser pour corriger automatiquement les tests Playwright en échec SCRIPT - sélecteurs alternatifs, retry contrôlé, rapport de correction. Exemples - <example>Context: qa-test-executor a classifié 3 échecs SCRIPT. assistant: 'Je lance qa-healing-coordinator pour réparer les tests cassés avec retry borné.'</example><example>user: 'Les tests du login sont cassés après le redesign, répare-les' assistant: 'qa-healing-coordinator va diagnostiquer, chercher des sélecteurs alternatifs et corriger.'</example>
     model: sonnet

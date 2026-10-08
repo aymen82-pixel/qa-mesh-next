@@ -9,7 +9,7 @@ import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { CONFIG_SCHEMA, ContractRegistry, validateConfig, type ValidationResult } from "./contracts";
+import { CONFIG_SCHEMA, ContractRegistry, validateConfig, validateDocument, type ValidationResult } from "./contracts";
 
 const QA_DIR = resolve(__dirname, "..", "..", ".qa");
 const CONTRACTS = join(QA_DIR, "contracts");
@@ -30,6 +30,8 @@ function load(name: string): { doc: Record<string, unknown>; expect?: Expectatio
 
 function check(schema: string, doc: unknown): ValidationResult {
   if (schema === CONFIG_SCHEMA) return validateConfig(registry, doc);
+  // Documents écrits par le kernel (rapports) : ni enveloppe ni payload d'agent.
+  if (schema !== "envelope" && !schema.startsWith("agent-")) return validateDocument(registry, schema, doc);
   // L'enveloppe seule (qa-analyst) n'a pas de payload contrôlé ; les agents oui.
   return registry.validateDeliverable(doc, schema === "envelope" ? undefined : schema);
 }

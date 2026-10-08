@@ -105,5 +105,15 @@
     "path_domain_map": {
       "src/billing": "checkout"
     }
-  }
+  },
+  "explore": {
+    "max_charters": 8,
+    "max_steps_per_charter": 40,
+    "max_duration_min": 10,
+    "parallelism": 1
+  },
+  "known_non_bugs": [
+    "Un lien qui ouvre un nouvel onglet laisse la page courante inchangée.",
+    "Les images se chargent à l'affichage (lazy loading) : défiler et attendre avant de conclure qu'une image est vide."
+  ]
 }

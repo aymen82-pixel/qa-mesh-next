@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "qa-mesh/agent-explore.schema.json",
+  "title": "Payload qa-explorer — résultat d'UN charter d'exploration",
+  "type": "object",
+  "required": [
+    "charter",
+    "status",
+    "summary",
+    "findings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "charter": {
+      "type": "object",
+      "required": [
+        "index",
+        "title"
+      ],
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3
+        }
+      }
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "blocked",
+        "exhausted"
+      ],
+      "description": "passed = charter mené à bien ; failed = le parcours a échoué ; blocked = empêché par l'environnement, les credentials ou les données ; exhausted = budget d'actions ou de temps atteint"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 1200
+    },
+    "error_code": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]+$",
+      "description": "Raison d'un charter failed/blocked (code du catalogue ou ENV_UNREACHABLE, AUTH_EXPIRED…)"
+    },
+    "tainted": {
+      "type": "boolean",
+      "description": "true si un secret a été saisi pendant le charter : aucune capture n'est alors acceptée"
+    },
+    "actions_used": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/finding"
+      }
+    }
+  },
+  "definitions": {
+    "finding": {
+      "type": "object",
+      "required": [
+        "title",
+        "kind",
+        "severity",
+        "expected",
+        "actual",
+        "repro_steps",
+        "route"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 160
+        },
+        "kind": {
+          "enum": [
+            "issue",
+            "warning"
+          ],
+          "description": "issue = défaut fonctionnel (fait échouer le verdict) ; warning = cosmétique"
+        },
+        "severity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "1 trivial · 2 low · 3 medium · 4 high · 5 critical"
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 3
+        },
+        "actual": {
+          "type": "string",
+          "minLength": 3
+        },
+        "repro_steps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 15,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "route": {
+          "type": "string",
+          "pattern": "^/",
+          "description": "Chemin relatif à base_url où le défaut se voit"
+        },
+        "screenshot_path": {
+          "type": "string",
+          "pattern": "^\\.qa/runs/[^/]+/explore/.+\\.(png|jpe?g)$",
+          "description": "Capture de preuve ; refusée par le kernel si un secret a été saisi pendant le charter"
+        }
+      }
+    }
+  }
+}

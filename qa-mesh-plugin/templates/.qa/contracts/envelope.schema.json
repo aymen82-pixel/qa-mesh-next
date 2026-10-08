@@ -3,34 +3,112 @@
   "$id": "qa-mesh/envelope.schema.json",
   "title": "Enveloppe qa-mesh/2.0 — commune à tous les échanges inter-agents",
   "type": "object",
-  "required": ["protocol", "run_id", "agent", "status", "payload"],
+  "required": [
+    "protocol",
+    "run_id",
+    "agent",
+    "status",
+    "payload"
+  ],
   "properties": {
     "protocol": {
-      "enum": ["qa-mesh/2.0", "qa-mesh/1.0"],
+      "enum": [
+        "qa-mesh/2.0",
+        "qa-mesh/1.0"
+      ],
       "description": "qa-mesh/2.0 par défaut ; qa-mesh/1.0 accepté mais DÉPRÉCIÉ (grâce d'une campagne)."
     },
     "schema_version": {
       "type": "string",
       "description": "Version du contrat de payload (ex. \"2.0\"). Optionnel en grâce 1.0, requis à terme."
     },
-    "run_id": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}-\\d{3}$" },
-    "agent": { "enum": ["agent-0", "agent-1", "agent-2", "agent-3", "agent-4", "agent-5", "agent-6", "agent-a11y", "agent-compliance", "agent-perf", "agent-po", "agent-spec", "qa-analyst"] },
-    "status": { "enum": ["ok", "partial", "error"] },
-    "domain": { "type": "string" },
-    "payload": { "type": "object" },
-    "errors": { "type": "array", "items": { "type": "string" } },
+    "run_id": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}-\\d{3}$"
+    },
+    "agent": {
+      "enum": [
+        "agent-0",
+        "agent-1",
+        "agent-2",
+        "agent-3",
+        "agent-4",
+        "agent-5",
+        "agent-6",
+        "agent-a11y",
+        "agent-compliance",
+        "agent-perf",
+        "agent-po",
+        "agent-spec",
+        "agent-explore",
+        "agent-bugverify",
+        "qa-analyst"
+      ]
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "error"
+      ]
+    },
+    "domain": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "metrics": {
       "type": "object",
       "properties": {
-        "duration_ms": { "type": "integer", "minimum": 0 },
-        "items_produced": { "type": "integer", "minimum": 0 }
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "items_produced": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     }
   },
   "definitions": {
-    "priority": { "enum": ["C", "E", "M", "F"] },
-    "test_status": { "enum": ["OK", "KO", "INS", "IGN"] },
-    "journey_type": { "enum": ["NOM", "ALT", "ERR", "LIMITE"] },
-    "failure_kind": { "enum": ["PRODUIT", "SCRIPT", "ENV"] }
+    "priority": {
+      "enum": [
+        "C",
+        "E",
+        "M",
+        "F"
+      ]
+    },
+    "test_status": {
+      "enum": [
+        "OK",
+        "KO",
+        "INS",
+        "IGN"
+      ]
+    },
+    "journey_type": {
+      "enum": [
+        "NOM",
+        "ALT",
+        "ERR",
+        "LIMITE"
+      ]
+    },
+    "failure_kind": {
+      "enum": [
+        "PRODUIT",
+        "SCRIPT",
+        "ENV"
+      ]
+    }
   }
 }

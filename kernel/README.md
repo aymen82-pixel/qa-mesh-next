@@ -211,6 +211,23 @@ déterministes (`src/errors/classify.ts`) testées sur des messages réels de
 Playwright (`src/errors/fixtures/`). `errors check` tourne aussi dans
 `npm --prefix kernel test`. Détail : `docs/errors.md`.
 
+### `explore` — mode explore (C3)
+
+```bash
+node kernel/dist/cli.js explore init --run <id> --goal "<objectif>" [--session <rôle>] [--read-only]
+node kernel/dist/cli.js explore context|status --run <id> [--json]
+node kernel/dist/cli.js explore start --run <id> --title "<t>" --instruction "<i>"
+node kernel/dist/cli.js explore ingest --run <id> <charter.json>
+node kernel/dist/cli.js explore decide --run <id> [--finished]
+node kernel/dist/cli.js explore close --run <id> [--assessment "<texte>"]
+```
+
+Moteur pur `src/explore/state.ts` (budgets bornés, arrêt après 3 charters
+ratés ou bloqués sans finding, parallélisme, verdict), état SQLite
+`src/explore/store.ts` (tables `explore_*` dans AgentDB, WAL), rendu
+`PROGRESS.md` (`src/explore/render.ts`). Contrats `agent-explore` (livrable d'un
+charter) et `explore-report` (écrit par le kernel). Détail : `guide qa-mesh/explore`.
+
 ### `guide` — documentation à la demande (C2)
 
 ```bash
@@ -312,6 +329,10 @@ Le kernel est ainsi invocable depuis n'importe quel emplacement du projet.
 | `src/errors/check.ts` | Vérification de cohérence de la taxonomie |
 | `src/commands/classify.ts` | Commande `classify` (rapport JSON Playwright) |
 | `src/commands/errors.ts` | Commandes `errors list/check` |
+| `src/explore/state.ts` | Boucle explore pure (budgets, arrêt, verdict) |
+| `src/explore/store.ts` | État d'exploration SQLite |
+| `src/explore/render.ts` | Rendu de PROGRESS.md |
+| `src/commands/explore.ts` | Commandes `explore …` |
 | `src/commands/guide.ts` | Commande `guide` (progressive disclosure) |
 | `src/trace/zip.ts` | Lecteur ZIP minimal (trace.zip) |
 | `src/trace/parse.ts` | Extraction pure des faits d'un trace Playwright |

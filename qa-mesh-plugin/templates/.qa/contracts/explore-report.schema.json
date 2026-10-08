@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "qa-mesh/explore-report.schema.json",
+  "title": "Rapport d'exploration — écrit par le kernel (`qa-mesh explore close`), jamais par un agent",
+  "type": "object",
+  "required": [
+    "run_id",
+    "goal",
+    "budgets",
+    "ended",
+    "verdict",
+    "charters",
+    "findings"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "goal": {
+      "type": "string"
+    },
+    "budgets": {
+      "type": "object",
+      "required": [
+        "max_charters",
+        "max_steps_per_charter",
+        "max_duration_min",
+        "parallelism"
+      ]
+    },
+    "read_only": {
+      "type": "boolean"
+    },
+    "ended": {
+      "enum": [
+        "finished",
+        "step-limit",
+        "time",
+        "stuck"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "passed",
+        "failed",
+        "blocked"
+      ]
+    },
+    "assessment": {
+      "type": "string"
+    },
+    "charters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "index",
+          "title",
+          "status",
+          "findings"
+        ],
+        "properties": {
+          "index": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "passed",
+              "failed",
+              "blocked",
+              "exhausted"
+            ]
+          },
+          "summary": {
+            "type": "string"
+          },
+          "error_code": {
+            "type": "string"
+          },
+          "findings": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "charter",
+          "title",
+          "kind",
+          "severity",
+          "expected",
+          "actual",
+          "repro_steps",
+          "route"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^F-\\d{3}$"
+          },
+          "charter": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "issue",
+              "warning"
+            ]
+          },
+          "severity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "expected": {
+            "type": "string"
+          },
+          "actual": {
+            "type": "string"
+          },
+          "repro_steps": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "route": {
+            "type": "string",
+            "pattern": "^/"
+          },
+          "screenshot_path": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

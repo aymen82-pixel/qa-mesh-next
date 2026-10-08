@@ -15,6 +15,7 @@ import { runRedact, runSecretsList } from "./commands/secrets";
 import { runSessionRefresh } from "./commands/session";
 import { runTraceRender } from "./commands/trace";
 import { runGuide } from "./commands/guide";
+import { EXPLORE_MODES, runExplore, type ExploreMode } from "./commands/explore";
 
 const VERSION = "2.0.0-alpha.1";
 
@@ -73,6 +74,14 @@ Usage :
   qa-mesh errors list|check [--json]
       Liste le catalogue des codes ; check vérifie catalogue, docs/errors.md, règles, fixtures et contrat agent-5.
 
+  qa-mesh explore init --run <id> --goal "<objectif>" [--session <rôle>] [--read-only]
+  qa-mesh explore context|status --run <id> [--json]
+  qa-mesh explore start --run <id> --title "<t>" --instruction "<i>" [--posture <p>]
+  qa-mesh explore ingest --run <id> <charter.json|->
+  qa-mesh explore decide --run <id> [--finished]
+  qa-mesh explore close --run <id> [--assessment "<texte>"]
+      Mode explore : le kernel tient l'état, les budgets, l'arrêt et le verdict ; PROGRESS.md généré.
+
   qa-mesh guide [skill[/topic] | topic] [--json]
       Documentation à la demande : liste des skills, routeur SKILL.md, ou une référence.
 
@@ -123,6 +132,8 @@ function parse(argv: string[]): ParsedArgs {
     "loop", "criteria", "max-iterations", "agents", "whitelist", "report",
     // classify (C5)
     "login-url",
+    // explore / bug bash (C3, C4)
+    "goal", "session", "title", "instruction", "posture", "assessment", "charter", "slug", "threshold", "finding", "spec",
   ]);
 
   for (let i = 0; i < argv.length; i++) {
@@ -318,6 +329,16 @@ function main(argv: string[]): number {
           return 2;
         }
         const outcome = runErrors({ mode, json: args.bools.has("json"), qaDir });
+        process.stdout.write(outcome.stdout + "\n");
+        return outcome.exitCode;
+      }
+      case "explore": {
+        const mode = args.positionals[0] as ExploreMode;
+        if (!EXPLORE_MODES.includes(mode)) {
+          process.stderr.write(`explore : sous-commande inconnue (${EXPLORE_MODES.join("|")})\n`);
+          return 2;
+        }
+        const outcome = runExplore({ mode, flags: args.flags, bools: args.bools, positionals: args.positionals.slice(1), qaDir });
         process.stdout.write(outcome.stdout + "\n");
         return outcome.exitCode;
       }

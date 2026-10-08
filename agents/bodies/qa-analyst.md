@@ -77,6 +77,7 @@ seulement quand la situation l'exige : `node kernel/dist/cli.js guide qa-mesh/<t
 | `contracts` | Pour écrire une enveloppe, comprendre un rejet de `validate`, ou toucher un contrat |
 | `optional-phases` | Spécialistes (a11y, compliance, perf) ou livrables manuels (Agent 3) demandés |
 | `loop` | Un loop de non-régression ciblée est demandé |
+| `explore` | Exploration libre d'une app vers un objectif (`/qa-explore`) : tu es le planificateur |
 | `debugging` | Lire un échec : codes, `trace.md` |
 | `secrets` | Toute question de credentials, de secret ou de redaction |
 | `tokens` | Revue de coût d'une campagne |

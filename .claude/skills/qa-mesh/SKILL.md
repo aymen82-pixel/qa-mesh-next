@@ -22,6 +22,7 @@ le kernel imprime le même texte : `node kernel/dist/cli.js guide qa-mesh/<topic
 | `contracts` | [references/contracts.md](references/contracts.md) | Écrire une enveloppe `qa-mesh/2.0`, comprendre un rejet de `validate`, modifier un contrat |
 | `optional-phases` | [references/optional-phases.md](references/optional-phases.md) | Spécialistes a11y / compliance / perf, ou livrables manuels de l'Agent 3 |
 | `loop` | [references/loop.md](references/loop.md) | Non-régression ciblée et bornée sur un module |
+| `explore` | [references/explore.md](references/explore.md) | Explorer une app vers un objectif sans test écrit (`/qa-explore`) |
 | `debugging` | [references/debugging.md](references/debugging.md) | Un test a échoué : code du catalogue, `trace.md` |
 | `secrets` | [references/secrets.md](references/secrets.md) | Credentials, clés, redaction, captures d'écran |
 | `tokens` | [references/tokens.md](references/tokens.md) | Revue ou réduction du coût d'une campagne |

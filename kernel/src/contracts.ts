@@ -15,7 +15,7 @@ export interface ValidationResult {
 
 export interface ValidationError {
   /** `envelope`, `payload` ou `config` — quelle couche a échoué. */
-  layer: "envelope" | "payload" | "config";
+  layer: "envelope" | "payload" | "config" | "document";
   /** Chemin JSON Pointer de l'instance fautive (ex. `/pages/0/url`). */
   path: string;
   message: string;
@@ -144,6 +144,17 @@ export function validateConfig(registry: ContractRegistry, doc: unknown): Valida
   }
   const valid = validate(doc) as boolean;
   return { valid, errors: valid ? [] : mapErrors(validate.errors, "config"), warnings: [] };
+}
+
+/**
+ * Valide un document nu (ni livrable d'agent, ni config) contre un schéma du
+ * registre — ex. `explore-report`, `bugbash-report`, écrits par le kernel.
+ */
+export function validateDocument(registry: ContractRegistry, key: string, doc: unknown): ValidationResult {
+  const validate = registry.schema(key);
+  if (!validate) throw new Error(`Contrat ${key}.schema.json introuvable dans .qa/contracts`);
+  const valid = validate(doc) as boolean;
+  return { valid, errors: valid ? [] : mapErrors(validate.errors, "document"), warnings: [] };
 }
 
 function mapErrors(

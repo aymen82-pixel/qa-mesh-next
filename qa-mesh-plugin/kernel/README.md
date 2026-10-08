@@ -211,6 +211,18 @@ déterministes (`src/errors/classify.ts`) testées sur des messages réels de
 Playwright (`src/errors/fixtures/`). `errors check` tourne aussi dans
 `npm --prefix kernel test`. Détail : `docs/errors.md`.
 
+### `guide` — documentation à la demande (C2)
+
+```bash
+node kernel/dist/cli.js guide                         # skills et topics
+node kernel/dist/cli.js guide qa-mesh                 # routeur (SKILL.md)
+node kernel/dist/cli.js guide qa-mesh/loop            # un topic
+node kernel/dist/cli.js guide locators                # raccourci si un seul skill a ce topic
+```
+
+Skills lus dans `$QA_SKILLS_DIR` ou `.claude/skills/`. Chaque routeur fait moins
+de 160 lignes, et toute référence est liée depuis sa table (`guide.test.ts`).
+
 ### `trace render` — page `trace.md` par test en échec (C6)
 
 ```bash
@@ -300,6 +312,7 @@ Le kernel est ainsi invocable depuis n'importe quel emplacement du projet.
 | `src/errors/check.ts` | Vérification de cohérence de la taxonomie |
 | `src/commands/classify.ts` | Commande `classify` (rapport JSON Playwright) |
 | `src/commands/errors.ts` | Commandes `errors list/check` |
+| `src/commands/guide.ts` | Commande `guide` (progressive disclosure) |
 | `src/trace/zip.ts` | Lecteur ZIP minimal (trace.zip) |
 | `src/trace/parse.ts` | Extraction pure des faits d'un trace Playwright |
 | `src/trace/render.ts` | Rendu pur et borné de trace.md |

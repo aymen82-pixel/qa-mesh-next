@@ -191,6 +191,12 @@ cat loops/checkout-regression/PROGRESS.md                 # historique lisible, 
 | Tests « flaky » | Ne jamais augmenter un timeout à l'aveugle — voir `.claude/rules/testing.md`. |
 | Écriture bloquée par `loop-guard` | Le fichier est hors de la `whitelist` d'un loop actif (étape 8) — élargissez `loops/<id>/loop.yaml` (toujours modifiable) ou attendez que le loop passe à `done`. |
 
+## Documentation à la demande
+
+Les agents (et vous) lisent un sujet à la fois :
+`node kernel/dist/cli.js guide` liste les skills, `guide qa-mesh/<topic>` imprime
+un topic (kernel, contracts, loop, debugging, secrets…).
+
 ## Structure
 
 ```

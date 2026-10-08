@@ -159,6 +159,13 @@ Chaque chantier se termine par : `npm run typecheck`, `npm --prefix kernel test`
 | Corps `qa-analyst` (chargé à chaque orchestration) | 15,9 Ko | 4 000 |
 | Sections conditionnelles de `qa-analyst` (mode loop, stratégie tokens, spécialistes, phase 3, protocole, détail CLI) | ≈ 5,5 Ko | ≈ 1 400 |
 
+**Mesure réelle (C2 livré)** : corps `qa-analyst` 16,1 Ko (après C5/C7) → 11,5 Ko,
+soit **-28 % (≈ 1 150 tokens) par orchestration**, alors qu'il route désormais vers
+9 topics (dont explore et bug-bash) au lieu de les embarquer. Routeurs : `qa-mesh`
+47 lignes, `playwright-best-practices` 48 lignes. Les 4 petits skills ne sont pas
+découpés (gain nul, conforme au plan) ; le test de forme de `guide.test.ts`
+s'applique à tous.
+
 **Où est le vrai gain**
 1. **Le corps de `qa-analyst`** : sortir les sections conditionnelles en topics `qa-mesh guide orchestration/<topic>` économise ≈ 35 % (≈ 1 400 tokens) par orchestration, et évite d'ajouter ≈ 1 000 tokens de plus pour explore et bug bash en C3/C4. Comme ce préfixe est en cache, le gain en coût est plus faible que le gain en tokens.
 2. **La portabilité** : les cibles codex, copilot et gemini ne chargent pas les skills. `qa-mesh guide` les rend lisibles par CLI sur les 5 runtimes, topic par topic, au lieu d'un bundle complet.

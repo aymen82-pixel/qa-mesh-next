@@ -26,15 +26,18 @@ sélectionné pour la plateforme QA multi-agents. Pour les 65+ autres guides
 9. **One behavior per test** — multiple related `expect()` calls are fine
 10. **Mock external services only** — never mock your own app
 
-## Références incluses
+## Topics
 
-| Quand | Guide | Agent consommateur |
-|---|---|---|
-| Choisir un sélecteur | [references/locators.md](references/locators.md) | Agent 1, 4, 6 |
-| Construire les POM | [references/page-object-model.md](references/page-object-model.md) | Agent 4 |
-| Fixtures, setup/teardown, multi-rôles | [references/fixtures-and-hooks.md](references/fixtures-and-hooks.md) | Agent 4 |
-| Auth, storageState, sessions | [references/authentication.md](references/authentication.md) | Agent 0, 4 |
-| Diagnostiquer/corriger un test flaky | [references/flaky-tests.md](references/flaky-tests.md) | Agent 5, 6 |
+Lire seulement le topic utile. Le kernel imprime le même texte :
+`node kernel/dist/cli.js guide playwright-best-practices/<topic>`.
+
+| Topic | Fichier | À lire quand | Agents |
+| --- | --- | --- | --- |
+| `locators` | [references/locators.md](references/locators.md) | Choisir ou réparer un sélecteur | 1, 4, 6 |
+| `page-object-model` | [references/page-object-model.md](references/page-object-model.md) | Créer ou modifier une classe POM | 4 |
+| `fixtures-and-hooks` | [references/fixtures-and-hooks.md](references/fixtures-and-hooks.md) | Fixtures, setup/teardown, multi-rôles | 4 |
+| `authentication` | [references/authentication.md](references/authentication.md) | storageState, sessions (la connexion passe par `qa-mesh session refresh`) | 0, 4 |
+| `flaky-tests` | [references/flaky-tests.md](references/flaky-tests.md) | Diagnostiquer ou corriger un test instable | 5, 6 |
 
 ## Security Trust Boundary
 

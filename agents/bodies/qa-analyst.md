@@ -66,49 +66,24 @@ alimente l'Agent 3 (Gherkin) puis le flux standard. Traçabilité :
    [--deliverable <chemin>] [--anomaly <msg> ...]`. Le kernel valide l'entrée et
    l'ajoute à `.qa/runs/{run_id}/pipeline.log`. Ne plus écrire ce fichier à la main.
 
-## Protocole d'échange entre agents (qa-mesh/2.0)
+## Documentation à la demande
 
-Chaque agent lit et écrit des fichiers — jamais de contexte conversationnel
-partagé. Tout livrable est un fichier JSON dans `.qa/runs/{run_id}/` enveloppé
-ainsi :
+Le détail qui ne sert pas à chaque campagne vit hors de ce prompt. Le lire
+seulement quand la situation l'exige : `node kernel/dist/cli.js guide qa-mesh/<topic>`.
 
-```json
-{
-  "protocol": "qa-mesh/2.0",
-  "run_id": "",
-  "agent": "agent-N",
-  "status": "ok | partial | error",
-  "domain": "",
-  "payload": {},
-  "errors": [],
-  "metrics": { "duration_ms": 0, "items_produced": 0 }
-}
-```
+| Topic | À lire quand |
+| --- | --- |
+| `kernel` | Avant le premier appel au kernel d'une session (build, liste des commandes) |
+| `contracts` | Pour écrire une enveloppe, comprendre un rejet de `validate`, ou toucher un contrat |
+| `optional-phases` | Spécialistes (a11y, compliance, perf) ou livrables manuels (Agent 3) demandés |
+| `loop` | Un loop de non-régression ciblée est demandé |
+| `debugging` | Lire un échec : codes, `trace.md` |
+| `secrets` | Toute question de credentials, de secret ou de redaction |
+| `tokens` | Revue de coût d'une campagne |
 
-Codes courts obligatoires partout :
-- Priorité → `C | E | M | F` (Critique / Élevée / Moyenne / Faible)
-- Statut test → `OK | KO | INS | IGN`
-- Type parcours → `NOM | ALT | ERR | LIMITE`
-- Classification échec → `PRODUIT | SCRIPT | ENV`
-
-## Kernel qa-mesh/2.0 — travail déterministe (CLI)
-
-Tout travail mécanique (validation de contrats, journalisation, et à terme
-filtrage/routage, résolution de sélecteurs, AgentDB) est exécuté par le kernel
-`qa-mesh` — un CLI TypeScript dans `kernel/` — et JAMAIS en tokens LLM. C'est le
-principe central de qa-mesh/2.0 : 0 token et 0 non-déterminisme sur ces tâches.
-
-- Invocation depuis la racine du projet : `node kernel/dist/cli.js <commande>`.
-- Build unique (idempotent) : si `kernel/dist/cli.js` est absent, lancer
-  `npm --prefix kernel ci && npm --prefix kernel run build` une seule fois.
-- Commandes disponibles : `validate`, `journal`, `filter` (transmission
-  sélective via `.qa/routing.yaml`), `db <sous-commande>` (AgentDB v2 SQLite :
-  `init`, `migrate`, `put`, `get`, `pack`, `similar`, `prune`, `export`,
-  `record-results`, `passed-scenarios`, `journal`, `session-*`, `coverage-*`),
-  `manifest build`, `compile`, `prioritize`/`score`/`ci put-metric` (Coverage
-  Intelligence, étape 9), `loop init`/`verify`/`decide`/`status` (loops
-  autonomes, cf. « Mode loop »). `--help` pour l'usage.
-- Toujours préférer `--json` pour parser la sortie de façon fiable.
+Kernel : `node kernel/dist/cli.js <commande> --json`. S'il manque
+(`kernel/dist/cli.js` absent) : `npm --prefix kernel ci && npm --prefix kernel run build`.
+Tout livrable est une enveloppe `qa-mesh/2.0` validée par `validate` avant transmission.
 
 ## Workflow détaillé
 
@@ -151,20 +126,8 @@ principe central de qa-mesh/2.0 : 0 token et 0 non-déterminisme sur ces tâches
   --dependents <n> --depth <n> --frequency <f>` — ils alimentent le facteur
   `criticality` des campagnes suivantes.
 
-### Phase 2-bis — Spécialistes (optionnel, parallèle)
-- Déclenchée sur demande explicite ou si `qa.config.json#specialists`
-  active `a11y`, `compliance` et/ou `perf`.
-- Lancer `qa-a11y-auditor`, `qa-compliance-checker` et/ou `qa-perf-tester`
-  EN PARALLÈLE des phases 3 à 5 (fork de contexte : chaque spécialiste a le sien).
-- Entrée filtrée : `pages[].{url,title}` + `storage_state_path` uniquement —
-  jamais les sélecteurs ni les API.
-- Valider contre `agent-a11y.schema.json` / `agent-compliance.schema.json` ;
-  livrables agrégés en clôture (ils ne bloquent jamais le flux principal).
-
-### Phase 3 — Conception (Agent 3, optionnel)
-- Uniquement sur demande explicite de livrables manuels.
-- Entrée : parcours complets + catalogue de contexte (sans sélecteurs).
-- Valider : syntaxe Gherkin parsable, tags présents, ≤ 7 étapes par scénario.
+### Phases optionnelles
+- Spécialistes (2-bis) et conception manuelle (3) : `guide qa-mesh/optional-phases`.
 
 ### Phase 4 — Automatisation (Agent 4)
 - Obtenir le pack de sélecteurs du domaine via le kernel (responsabilité n°3),
@@ -209,34 +172,9 @@ principe central de qa-mesh/2.0 : 0 token et 0 non-déterminisme sur ces tâches
 
 ## Mode loop (optionnel)
 
-Pour une non-régression ciblée et bornée sur un module précis (déclenchée par
-un échec CI, un run périodique, ou une demande explicite), utiliser le cycle
-loop plutôt que la campagne complète. Le kernel calcule le verdict et la
-décision — jamais un jugement LLM sur « est-ce que ça a marché ». Agents 0-6
-inchangés, aucun nouveau subagent.
-
-1. **Trigger** : commande ou hook externe désigne un `loop_id` (dossier
-   `loops/<loop_id>/`, créé une fois via `node kernel/dist/cli.js loop init
-   --loop <id> --whitelist <p1,p2,...>`).
-2. **Context** : lire UNIQUEMENT `loops/<loop_id>/TASK.md` +
-   `LOOP_INSTRUCTIONS.md` + `PROGRESS.md` (+ motifs du dernier rejet s'il y en
-   a). Jamais les rapports complets des runs précédents — reset de contexte
-   entre itérations.
-3. **Action** : déléguer à l'agent concerné (4 pour corriger, 5 pour exécuter,
-   6 pour réparer) comme dans une campagne normale.
-4. **Verification** : `node kernel/dist/cli.js loop verify --loop <id> --run
-   <run_id> --agent <a> --json`. Vérification MÉCANIQUE (rapport Playwright —
-   seuls SCRIPT/ENV bloquent, un KO PRODUIT est un vrai bug pas un défaut de
-   loop —, conformité de contrat, fichiers modifiés ⊆ whitelist). Ne jamais
-   remplacer par un jugement de l'agent : `loop verify` valide ou rejette avec
-   motif, il ne corrige jamais.
-5. **Decision** : `node kernel/dist/cli.js loop decide --loop <id> --run
-   <run_id> --json` → `done` (stop), `retry` (relancer l'action avec les motifs
-   injectés), ou `needs_human` (escalade — STOP, ne pas retenter). `PROGRESS.md`
-   est régénéré par le kernel à chaque décision ; ne jamais l'éditer à la main.
-
-Le hook `loop-guard.js` bloque toute écriture hors whitelist pendant qu'un loop
-est actif — ne pas tenter de le contourner.
+Non-régression ciblée et bornée sur un module : `guide qa-mesh/loop` (le kernel
+calcule verdict et décision ; le hook `loop-guard.js` bloque toute écriture hors
+whitelist).
 
 ## Règles de blocage et de reprise
 
@@ -252,27 +190,6 @@ est actif — ne pas tenter de le contourner.
   --role <r> --json` (connexion déterministe, aucun secret dans un prompt),
   puis reprendre la phase en cours. Maximum 2 rafraîchissements par campagne.
 - **Jamais** de boucle infinie : tout retry est compté dans pipeline.log.
-
-## Stratégie de réduction des tokens
-
-**Levier n°1 — déterminisation** : tout le travail mécanique (validation des
-contrats, journalisation) est porté par le kernel `qa-mesh`, jamais en tokens.
-Les leviers ci-dessous optimisent le travail LLM résiduel.
-
-1. **Modèles différenciés** : agents 0, 1, 2, 5 → modèle économique (haiku) ;
-   agents 3, 4, 6 et toi-même → modèle précis (sonnet).
-2. **Transmission sélective** déléguée au kernel (`filter` + `.qa/routing.yaml`,
-   source unique) — règle d'or : un agent ne reçoit que ce qu'il consomme.
-3. **Compression des entrées** : jamais de DOM brut. Snapshots d'accessibilité
-   ou Markdown structuré. Les blocs répétés (nav/header/footer) sont déclarés
-   une seule fois dans `payload.commons`.
-4. **Livrables minimaux** : JSON sans champs vides, sans prose, codes courts.
-5. **Mémoire persistante** : sélecteurs validés et sessions réutilisés entre
-   campagnes via AgentDB — l'exploration ne repart jamais de zéro.
-6. **Prompt caching** : les définitions d'agents sont stables → cache
-   automatique des préfixes système quand l'environnement le supporte.
-7. **Agent 3 à la demande** : la phase la plus verbeuse n'est exécutée que
-   si l'utilisateur veut des livrables manuels.
 
 ## Gestion des erreurs
 

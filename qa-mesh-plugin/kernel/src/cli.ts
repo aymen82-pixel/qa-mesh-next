@@ -14,6 +14,7 @@ import { runErrors } from "./commands/errors";
 import { runRedact, runSecretsList } from "./commands/secrets";
 import { runSessionRefresh } from "./commands/session";
 import { runTraceRender } from "./commands/trace";
+import { runGuide } from "./commands/guide";
 
 const VERSION = "2.0.0-alpha.1";
 
@@ -71,6 +72,9 @@ Usage :
       Attribue à chaque test en échec un code du catalogue, sa classe PRODUIT|SCRIPT|ENV et une piste.
   qa-mesh errors list|check [--json]
       Liste le catalogue des codes ; check vérifie catalogue, docs/errors.md, règles, fixtures et contrat agent-5.
+
+  qa-mesh guide [skill[/topic] | topic] [--json]
+      Documentation à la demande : liste des skills, routeur SKILL.md, ou une référence.
 
   qa-mesh trace render --run <id> --report <playwright.json> [--login-url /login] [--json]
       Écrit .qa/runs/<id>/results/<test>/trace.md par test en échec (étapes, code, journal app, snapshot).
@@ -314,6 +318,11 @@ function main(argv: string[]): number {
           return 2;
         }
         const outcome = runErrors({ mode, json: args.bools.has("json"), qaDir });
+        process.stdout.write(outcome.stdout + "\n");
+        return outcome.exitCode;
+      }
+      case "guide": {
+        const outcome = runGuide({ topic: args.positionals[0], json: args.bools.has("json"), qaDir });
         process.stdout.write(outcome.stdout + "\n");
         return outcome.exitCode;
       }

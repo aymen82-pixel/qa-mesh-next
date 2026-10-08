@@ -46,3 +46,18 @@ test("règles de test inchangées : waitForTimeout bloqué dans tests/, pas dans
   assert.equal(guard("tests/a/a.spec.ts", "await page.waitForTimeout(500);").code, 2);
   assert.equal(guard("docs/regles.md", "jamais waitForTimeout(500)").code, 0);
 });
+
+test("aiJudge jamais seul : bloqué sans assertion déterministe, accepté avec", () => {
+  const alone = "test('x', async ({ aiJudge }) => {\n  const v = await aiJudge.evaluate({ output: o, criterion: c });\n  expect(v.ok, v.reason).toBe(true);\n});";
+  const res = guard("tests/rag/rag.answer.spec.ts", alone);
+  assert.equal(res.code, 2);
+  assert.match(res.stderr, /aiJudge utilisé seul/);
+  const paired = alone.replace("expect(v.ok", "expect(o, 'source citée').toContain('note 12');\n  expect(v.ok");
+  assert.equal(guard("tests/rag/rag.answer.spec.ts", paired).code, 0);
+});
+
+test("le spec réel du juge IA respecte la règle", () => {
+  const { readFileSync } = require("node:fs") as typeof import("node:fs");
+  const spec = readFileSync(resolve(__dirname, "..", "..", "..", "tests", "ai-judge", "ai-judge.spec.ts"), "utf8");
+  assert.equal(guard("tests/ai-judge/ai-judge.spec.ts", spec).code, 0);
+});

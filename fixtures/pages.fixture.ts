@@ -9,6 +9,8 @@ import {
   type TypedResponse,
 } from '../utils/api-client';
 import { SecretVault } from '../utils/secrets';
+import { AiJudge, type AiJudgeConfig } from '../utils/ai-judge/judge';
+import { resolveAiJudgeConfig } from '../utils/ai-judge/config';
 import type { SecretRef } from '../kernel/src/secrets/redact';
 
 /**
@@ -48,11 +50,30 @@ type SecretFixtures = {
   secrets: SecretVault;
 };
 
-export const test = base.extend<PageObjects & ApiFixtures & SecretFixtures>({
+/**
+ * Juge IA (C8), DÉSACTIVÉ par défaut : `qa.config.json#ai_judge.enabled`.
+ * Désactivé -> le test qui le demande est sauté avec un message explicite.
+ * Toujours combiné à au moins une assertion déterministe dans le même test.
+ */
+type AiJudgeFixtures = {
+  /** Surcharge de configuration (`test.use`) ; par défaut `qa.config.json#ai_judge`. */
+  aiJudgeConfig: AiJudgeConfig | undefined;
+  aiJudge: AiJudge;
+};
+
+export const test = base.extend<PageObjects & ApiFixtures & SecretFixtures & AiJudgeFixtures>({
   secretRegistry: [undefined, { option: true }],
 
   secrets: async ({ secretRegistry }, use) => {
     await use(new SecretVault(secretRegistry));
+  },
+
+  aiJudgeConfig: [undefined, { option: true }],
+
+  aiJudge: async ({ aiJudgeConfig, secrets }, use, testInfo) => {
+    const config = aiJudgeConfig ?? resolveAiJudgeConfig();
+    testInfo.skip(!config.enabled, 'aiJudge désactivé (qa.config.json#ai_judge.enabled=false)');
+    await use(new AiJudge(config, secrets.redactor()));
   },
 
   loginPage: async ({ page }, use) => {

@@ -20,6 +20,10 @@
   (remplit et masque), `secrets.screenshot(page)` (capture avec `mask`). Jamais
   de valeur, de JWT, de `Bearer …` ni de clé `sk-…` dans un fichier (bloqué
   par `qa-guard`).
+- Sorties non déterministes (GenAI, RAG) : fixture `aiJudge` (désactivée par
+  défaut), verdict `ok` = `pass` et `confidence >= min_confidence`. **Jamais
+  seule** : au moins une assertion déterministe dans le même test (bloqué par
+  `qa-guard` sinon). Juger le sens, pas la formulation.
 - Couverture minimale par fonctionnalité : 1 nominal + 1 erreur.
 - Tests flaky : diagnostiquer (taxonomie du skill `playwright-best-practices`,
   `references/flaky-tests.md`) ; quarantaine `test.fixme()` + raison + ticket,

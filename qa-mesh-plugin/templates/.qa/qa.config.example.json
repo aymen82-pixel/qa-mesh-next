@@ -118,5 +118,13 @@
   ],
   "bugbash": {
     "shared_env": true
+  },
+  "ai_judge": {
+    "enabled": false,
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-5",
+    "api_key_env": "ANTHROPIC_API_KEY",
+    "min_confidence": 0.8,
+    "cache": true
   }
 }

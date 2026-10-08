@@ -50,6 +50,27 @@ const TOKEN_RULES = [
   },
 ];
 
+/**
+ * C8 : un test qui appelle le juge IA (`x.evaluate(` / `x.judge(` sur aiJudge
+ * ou AiJudge) doit contenir au moins une assertion déterministe, c'est-à-dire
+ * un `expect(` dont le sujet n'est pas un verdict du juge. Heuristique statique,
+ * bloc par bloc (`test(`).
+ */
+function aiJudgeAlone(content) {
+  if (!/aiJudge|AiJudge/.test(content)) return [];
+  const offenders = [];
+  for (const block of content.split(/\btest\(/).slice(1)) {
+    if (!/\.(?:evaluate|judge)\(/.test(block)) continue;
+    const verdictVars = [...block.matchAll(/(?:const|let)\s+(\w+)\s*=\s*await\s+\w+\.(?:evaluate|judge)\(/g)].map((m) => m[1]);
+    const subjects = [...block.matchAll(/expect\(\s*([^,)]*)/g)].map((m) => m[1].trim());
+    const deterministic = subjects.filter(
+      (s) => s && !/aiJudge|judge\b/.test(s) && !verdictVars.some((v) => s === v || s.startsWith(`${v}.`)),
+    );
+    if (!deterministic.length) offenders.push(block.slice(0, 60).split('\n')[0]);
+  }
+  return offenders;
+}
+
 function readStdin() {
   return new Promise((resolve) => {
     let data = '';
@@ -77,6 +98,11 @@ function readStdin() {
   // Jetons : partout. Règles de test (.claude/rules/testing.md) : fichiers de test seulement.
   const rules = GUARDED_PATH.test(filePath) ? [...TOKEN_RULES, ...RULES] : TOKEN_RULES;
   const violations = rules.filter((r) => r.pattern.test(added)).map((r) => `- ${r.message}`);
+  if (GUARDED_PATH.test(filePath)) {
+    for (const t of aiJudgeAlone(added)) {
+      violations.push(`- aiJudge utilisé seul dans « ${t} » : ajouter au moins une assertion déterministe dans le même test (.claude/rules/testing.md).`);
+    }
+  }
 
   if (violations.length > 0) {
     console.error(`qa-guard : écriture bloquée dans ${filePath}\n${violations.join('\n')}`);

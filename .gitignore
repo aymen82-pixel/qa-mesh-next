@@ -77,3 +77,6 @@ CLAUDE.local.md
 
 # Config du projet testé (données projet, hors du template)
 .qa/qa.config.json
+
+# Cache des verdicts du juge IA (C8)
+.qa/ai-judge-cache/

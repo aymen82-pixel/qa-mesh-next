@@ -11,6 +11,8 @@ import { runPlugin } from "./commands/plugin";
 import { runConfigCheck } from "./commands/config";
 import { runClassify } from "./commands/classify";
 import { runErrors } from "./commands/errors";
+import { runRedact, runSecretsList } from "./commands/secrets";
+import { runSessionRefresh } from "./commands/session";
 
 const VERSION = "2.0.0-alpha.1";
 
@@ -68,6 +70,14 @@ Usage :
       Attribue à chaque test en échec un code du catalogue, sa classe PRODUIT|SCRIPT|ENV et une piste.
   qa-mesh errors list|check [--json]
       Liste le catalogue des codes ; check vérifie catalogue, docs/errors.md, règles, fixtures et contrat agent-5.
+
+  qa-mesh secrets list [--json]
+      Registre des secrets (noms, variable d'env, présence) — jamais de valeur.
+  qa-mesh redact <fichier|-> [--in-place]
+      Masque les secrets du registre (<secret:nom>) dans un texte ou un JSON.
+  qa-mesh session refresh --role <r> [--json]
+      Connexion DÉTERMINISTE (projet Playwright "setup", tests/auth.setup.ts) puis
+      enregistrement du storageState dans AgentDB. Aucun mot de passe ne passe par un agent.
 
   qa-mesh config check [fichier] [--json]
       Valide .qa/qa.config.json (ou le fichier donné) contre qa-config.schema.json.
@@ -300,6 +310,29 @@ function main(argv: string[]): number {
           return 2;
         }
         const outcome = runErrors({ mode, json: args.bools.has("json"), qaDir });
+        process.stdout.write(outcome.stdout + "\n");
+        return outcome.exitCode;
+      }
+      case "secrets": {
+        if (args.positionals[0] !== "list") {
+          process.stderr.write("secrets : sous-commande inconnue (list)\n");
+          return 2;
+        }
+        const outcome = runSecretsList({ json: args.bools.has("json"), qaDir });
+        process.stdout.write(outcome.stdout + "\n");
+        return outcome.exitCode;
+      }
+      case "redact": {
+        const outcome = runRedact({ file: args.positionals[0], inPlace: args.bools.has("in-place"), qaDir });
+        process.stdout.write(outcome.stdout + "\n");
+        return outcome.exitCode;
+      }
+      case "session": {
+        if (args.positionals[0] !== "refresh") {
+          process.stderr.write("session : sous-commande inconnue (refresh)\n");
+          return 2;
+        }
+        const outcome = runSessionRefresh({ role: first(args, "role"), json: args.bools.has("json"), qaDir });
         process.stdout.write(outcome.stdout + "\n");
         return outcome.exitCode;
       }

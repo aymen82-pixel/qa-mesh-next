@@ -35,16 +35,15 @@ fichiers, tu croises, tu scores. Aucune règle métier — tout vient de
    données → `C` ; navigation/listing → `E` ; affichage statique → `M` ;
    cosmétique → `F`.
 
-5. **Session persistante** :
+5. **Session persistante** (connexion déterministe, C7) :
    - `qa-mesh db session-get --role <rôle> --json`. Si une session valide est
      retournée (non expirée) → la réutiliser.
-   - Sinon : exécuter la séquence de login décrite dans
-     `qa.config.json#auth.steps` via Playwright MCP, sauvegarder le storageState
-     dans `.qa/agentdb/sessions/{role}.json` (fichier hors VCS), puis enregistrer
-     l'entrée via `qa-mesh db session-put --role <r> --storage-state <chemin>
-     --expires <iso>` (TTL par défaut : 24 h).
-   - Les credentials viennent UNIQUEMENT de variables d'environnement
-     référencées par la config — jamais en clair dans un livrable.
+   - Sinon : `qa-mesh session refresh --role <rôle> --json`. Le kernel lance le
+     setup Playwright (`tests/auth.setup.ts`), vérifie la connexion et enregistre
+     le storageState. **Tu ne te connectes jamais toi-même** et tu ne lis jamais
+     une variable de mot de passe : aucun secret ne passe par ton contexte.
+   - Exit 2 (rôle ou variables absents) ou 1 (connexion en échec) → `status:
+     error` avec le message du kernel tel quel, STOP.
 
 6. **Mise à jour mémoire** : écrire les scores via
    `qa-mesh db coverage-put --domain <d> --score <s> [--routes-hash <h>]`
@@ -74,7 +73,7 @@ Trié par priorité décroissante. JSON minifié, pas de champs vides, pas de pr
 
 ## Règles
 
-- Ne jamais naviguer au-delà du strict nécessaire au login (économie tokens).
+- Aucune navigation pour se connecter : la session vient du kernel.
 - Si aucun gap : `status: ok` avec `coverage_gaps: []` — le QA Analyst clôt.
-- Si le login échoue 2 fois : `status: error` avec le message exact, STOP.
+- Si `session refresh` échoue : `status: error` avec son message, STOP (pas de nouvelle tentative).
 - Sortie uniquement dans le chemin fourni. Aucune modification du code projet.

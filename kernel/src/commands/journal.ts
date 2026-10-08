@@ -4,6 +4,7 @@ import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { findQaDir, runDir } from "../paths";
 import { AgentDb } from "../db/agentdb";
+import { projectRedactor } from "../secrets/project";
 
 export interface JournalOptions {
   runId: string;
@@ -43,8 +44,11 @@ export function runJournal(opts: JournalOptions): JournalOutcome {
     status: opts.status,
   };
   if (opts.end) entry.end = opts.end;
-  if (opts.deliverable) entry.deliverable_path = opts.deliverable;
-  if (opts.anomalies && opts.anomalies.length) entry.anomalies = opts.anomalies;
+  // Les anomalies sont de la prose libre (messages d'erreur, sorties) : jamais
+  // écrites sans redaction des secrets du registre (C7).
+  const redact = projectRedactor(qaDir);
+  if (opts.deliverable) entry.deliverable_path = redact(opts.deliverable);
+  if (opts.anomalies && opts.anomalies.length) entry.anomalies = opts.anomalies.map(redact);
 
   const validate = loadJournalValidator(qaDir);
   if (!validate(entry)) {
@@ -73,8 +77,8 @@ export function runJournal(opts: JournalOptions): JournalOutcome {
         agent: opts.agent,
         ts: String(entry.start),
         status: opts.status,
-        deliverable_path: opts.deliverable,
-        anomalies: opts.anomalies,
+        deliverable_path: entry.deliverable_path as string | undefined,
+        anomalies: entry.anomalies as string[] | undefined,
       });
     } finally {
       db.close();

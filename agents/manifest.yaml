@@ -117,10 +117,6 @@ agents:
       - Bash
       - mcp__playwright-test__browser_navigate
       - mcp__playwright-test__browser_snapshot
-      - mcp__playwright-test__browser_type
-      - mcp__playwright-test__browser_click
-      - mcp__playwright-test__browser_press_key
-      - mcp__playwright-test__browser_wait_for
       - mcp__playwright-test__browser_evaluate
   qa-healing-coordinator:
     description: Agent 6 — Coordinateur d'auto-réparation. Extension du playwright-test-healer. À utiliser pour corriger automatiquement les tests Playwright en échec SCRIPT - sélecteurs alternatifs, retry contrôlé, rapport de correction. Exemples - <example>Context: qa-test-executor a classifié 3 échecs SCRIPT. assistant: 'Je lance qa-healing-coordinator pour réparer les tests cassés avec retry borné.'</example><example>user: 'Les tests du login sont cassés après le redesign, répare-les' assistant: 'qa-healing-coordinator va diagnostiquer, chercher des sélecteurs alternatifs et corriger.'</example>

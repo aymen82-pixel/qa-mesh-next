@@ -247,8 +247,9 @@ est actif — ne pas tenter de le contourner.
 - **Reprise** : avant chaque phase, vérifier si le livrable existe déjà dans
   `.qa/runs/{run_id}/` avec `status: ok` → sauter la phase (idempotence).
   Une campagne interrompue se reprend avec le même `run_id`.
-- **Session expirée** pendant les phases 2-6 : relancer la séquence
-  d'authentification de l'Agent 0 (rafraîchissement du storageState),
+- **Session expirée** pendant les phases 2-6 (code `AUTH_EXPIRED`, ou
+  `session_expired` d'un agent) : `node kernel/dist/cli.js session refresh
+  --role <r> --json` (connexion déterministe, aucun secret dans un prompt),
   puis reprendre la phase en cours. Maximum 2 rafraîchissements par campagne.
 - **Jamais** de boucle infinie : tout retry est compté dans pipeline.log.
 

@@ -4,94 +4,217 @@
   "title": "Configuration projet .qa/qa.config.json — SEUL fichier de données projet",
   "description": "Validée par `qa-mesh config check`. Toute nouvelle clé de config passe par ce schéma (et ses deux fixtures) dans le même commit que son consommateur.",
   "type": "object",
-  "required": ["base_url", "paths", "roles", "auth"],
+  "required": [
+    "base_url",
+    "paths",
+    "roles",
+    "auth"
+  ],
   "additionalProperties": false,
-  "patternProperties": { "^\\$comment$": { "type": "string" } },
+  "patternProperties": {
+    "^\\$comment$": {
+      "type": "string"
+    }
+  },
   "properties": {
-    "base_url": { "type": "string", "format": "uri", "pattern": "^https?://" },
-    "language": { "type": "string", "minLength": 2 },
-    "test_management_tool": { "enum": ["xray", "zephyr", "testrail", "none"] },
+    "base_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://"
+    },
+    "language": {
+      "type": "string",
+      "minLength": 2
+    },
+    "test_management_tool": {
+      "enum": [
+        "xray",
+        "zephyr",
+        "testrail",
+        "none"
+      ]
+    },
     "paths": {
       "type": "object",
-      "required": ["testDir", "pagesDir", "fixturesDir"],
+      "required": [
+        "testDir",
+        "pagesDir",
+        "fixturesDir"
+      ],
       "additionalProperties": false,
       "properties": {
-        "testDir": { "type": "string", "minLength": 1 },
-        "pagesDir": { "type": "string", "minLength": 1 },
-        "fixturesDir": { "type": "string", "minLength": 1 },
-        "docsDir": { "type": "string" },
-        "test_data": { "type": "string" }
+        "testDir": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pagesDir": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fixturesDir": {
+          "type": "string",
+          "minLength": 1
+        },
+        "docsDir": {
+          "type": "string"
+        },
+        "test_data": {
+          "type": "string"
+        }
       }
     },
-    "run_command": { "type": "string", "minLength": 1 },
-    "compile_command": { "type": "string", "minLength": 1 },
-    "known_routes": { "type": "array", "items": { "type": "string" } },
-    "excluded_routes": { "type": "array", "items": { "type": "string" } },
+    "run_command": {
+      "type": "string",
+      "minLength": 1
+    },
+    "compile_command": {
+      "type": "string",
+      "minLength": 1
+    },
+    "known_routes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "excluded_routes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "roles": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["name", "username_env", "password_env"],
+        "required": [
+          "name",
+          "username_env",
+          "password_env"
+        ],
         "additionalProperties": false,
         "properties": {
-          "name": { "type": "string", "minLength": 1 },
-          "username_env": { "$ref": "#/definitions/envName" },
-          "password_env": { "$ref": "#/definitions/envName" },
-          "default": { "type": "boolean" }
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "username_env": {
+            "$ref": "#/definitions/envName"
+          },
+          "password_env": {
+            "$ref": "#/definitions/envName"
+          },
+          "default": {
+            "type": "boolean"
+          }
         }
       }
     },
     "auth": {
       "type": "object",
-      "required": ["login_url"],
+      "required": [
+        "login_url"
+      ],
       "additionalProperties": false,
       "properties": {
-        "login_url": { "type": "string", "pattern": "^/" },
-        "steps": { "type": "array", "items": { "type": "string" } },
-        "session_ttl_hours": { "type": "number", "exclusiveMinimum": 0 }
+        "login_url": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "session_ttl_hours": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "patternProperties": {
+        "^\\$comment$": {
+          "type": "string"
+        }
       }
     },
     "budgets": {
       "type": "object",
-      "additionalProperties": { "type": "integer", "minimum": 0 }
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
     },
     "specialists": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "a11y": { "type": "boolean" },
-        "compliance": { "type": "boolean" },
-        "perf": { "type": "boolean" }
+        "a11y": {
+          "type": "boolean"
+        },
+        "compliance": {
+          "type": "boolean"
+        },
+        "perf": {
+          "type": "boolean"
+        }
       }
     },
     "compliance": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "ai_features": { "type": "boolean" },
-        "personal_data": { "type": "boolean" },
-        "high_risk_ai": { "type": "boolean" }
+        "ai_features": {
+          "type": "boolean"
+        },
+        "personal_data": {
+          "type": "boolean"
+        },
+        "high_risk_ai": {
+          "type": "boolean"
+        }
       }
     },
     "perf": {
       "type": "object",
       "properties": {
-        "max_pages": { "type": "integer", "minimum": 1 },
+        "max_pages": {
+          "type": "integer",
+          "minimum": 1
+        },
         "budgets": {
           "type": "object",
-          "additionalProperties": { "type": "number", "minimum": 0 }
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0
+          }
         },
         "load": {
           "type": "object",
-          "required": ["allowed"],
+          "required": [
+            "allowed"
+          ],
           "properties": {
-            "allowed": { "type": "boolean" },
-            "target_env": { "type": "string" },
-            "script_path": { "type": "string" },
-            "vus": { "type": "integer", "minimum": 1 },
-            "duration": { "type": "string" },
-            "prod_authorized_by": { "type": "string" }
+            "allowed": {
+              "type": "boolean"
+            },
+            "target_env": {
+              "type": "string"
+            },
+            "script_path": {
+              "type": "string"
+            },
+            "vus": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "duration": {
+              "type": "string"
+            },
+            "prod_authorized_by": {
+              "type": "string"
+            }
           }
         }
       }
@@ -100,21 +223,84 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "input_dir": { "type": "string" },
-        "output_dir": { "type": "string" }
+        "input_dir": {
+          "type": "string"
+        },
+        "output_dir": {
+          "type": "string"
+        }
       }
     },
     "coverage_intelligence": {
       "type": "object",
       "properties": {
-        "business_risk": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0, "maximum": 10 } },
-        "floors": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0, "maximum": 100 } },
-        "weights": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0 } },
-        "max_staleness_days": { "type": "number", "minimum": 0 },
-        "staleness_floor": { "type": "number", "minimum": 0, "maximum": 100 },
-        "stability_window": { "type": "integer", "minimum": 1 },
-        "recency_tau_days": { "type": "number", "exclusiveMinimum": 0 },
-        "path_domain_map": { "type": "object", "additionalProperties": { "type": "string" } }
+        "business_risk": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10
+          }
+        },
+        "floors": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "weights": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "max_staleness_days": {
+          "type": "number",
+          "minimum": 0
+        },
+        "staleness_floor": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "stability_window": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "recency_tau_days": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "path_domain_map": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "secrets": {
+      "type": "array",
+      "description": "Registre des secrets (C7) : NOMS uniquement. La valeur est lue dans la variable `env` au moment de l'exécution, jamais écrite. Le mot de passe de chaque rôle est enregistré automatiquement sous `<rôle>.password`.",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "env"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_.-]{0,63}$"
+          },
+          "env": {
+            "$ref": "#/definitions/envName"
+          }
+        }
       }
     }
   },

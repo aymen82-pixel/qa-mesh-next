@@ -24,6 +24,12 @@
       "default": true
     }
   ],
+  "secrets": [
+    {
+      "name": "api-token",
+      "env": "API_TOKEN"
+    }
+  ],
   "auth": {
     "login_url": "/login",
     "steps": [
@@ -32,7 +38,8 @@
       "click role=button[name~=connect|login|sign in]",
       "wait url!=/login"
     ],
-    "session_ttl_hours": 24
+    "session_ttl_hours": 24,
+    "$comment": "Connexion déterministe : tests/auth.setup.ts + pages/login.page.ts, lancée par `qa-mesh session refresh --role <r>`. `steps` est une description pour adapter le POM, jamais exécutée par un agent."
   },
   "budgets": {
     "max_retries_per_agent": 2,

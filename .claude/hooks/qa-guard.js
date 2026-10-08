@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Hook PreToolUse (Edit|Write) — applique .claude/rules/testing.md de façon
- * déterministe : un agent ne peut pas écrire un spec qui viole les interdits.
+ * déterministe : un agent ne peut pas écrire un spec qui viole les interdits,
+ * ni écrire un jeton (JWT, Bearer, clé sk-…) dans aucun fichier (C7).
  * Exit 0 = autorisé · Exit 2 = bloqué (stderr renvoyé à l'agent pour correction).
  */
 'use strict';
@@ -31,6 +32,24 @@ const RULES = [
   },
 ];
 
+// Formes courantes de jetons (C7) : bloquées sur TOUT chemin écrit par un agent.
+// Les gabarits (`${token}`, `<token>`, `...`) ne correspondent pas : les classes
+// de caractères excluent `$`, `{`, `<`, et une longueur minimale est exigée.
+const TOKEN_RULES = [
+  {
+    pattern: /\beyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/,
+    message: 'JWT en clair interdit — déclarer un secret (qa.config.json#secrets) et le lire dans l\'environnement.',
+  },
+  {
+    pattern: /\bBearer\s+[A-Za-z0-9\-._~+/]{20,}=*/,
+    message: 'Jeton Bearer en clair interdit — utiliser API_TOKEN (variable d\'environnement) via la fixture apiRequest.',
+  },
+  {
+    pattern: /\bsk-(?:ant-|proj-|live_|test_)?[A-Za-z0-9_-]{20,}/,
+    message: 'Clé d\'API (sk-…) en clair interdite — la déclarer dans qa.config.json#secrets et la lire dans l\'environnement.',
+  },
+];
+
 function readStdin() {
   return new Promise((resolve) => {
     let data = '';
@@ -50,13 +69,14 @@ function readStdin() {
 
   const toolInput = input.tool_input || {};
   const filePath = toolInput.file_path || '';
-  if (!GUARDED_PATH.test(filePath)) process.exit(0);
 
   // Write → content ; Edit → new_string. On ne contrôle que ce qui est AJOUTÉ.
   const added = [toolInput.content, toolInput.new_string].filter(Boolean).join('\n');
   if (!added) process.exit(0);
 
-  const violations = RULES.filter((r) => r.pattern.test(added)).map((r) => `- ${r.message}`);
+  // Jetons : partout. Règles de test (.claude/rules/testing.md) : fichiers de test seulement.
+  const rules = GUARDED_PATH.test(filePath) ? [...TOKEN_RULES, ...RULES] : TOKEN_RULES;
+  const violations = rules.filter((r) => r.pattern.test(added)).map((r) => `- ${r.message}`);
 
   if (violations.length > 0) {
     console.error(`qa-guard : écriture bloquée dans ${filePath}\n${violations.join('\n')}`);

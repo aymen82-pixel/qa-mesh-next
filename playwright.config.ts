@@ -1,8 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Playwright configuration for testing practiceautomatedtesting.com
- * See https://playwright.dev/docs/test-configuration
+ * Configuration Playwright qa-mesh-next — https://playwright.dev/docs/test-configuration
+ * Aucune donnée projet ici : la cible vient de BASE_URL / .qa/qa.config.json.
  */
 export default defineConfig({
   testDir: './tests',
@@ -39,6 +39,14 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    /* Connexion déterministe d'un rôle (tests/auth.setup.ts) — lancée par
+       `qa-mesh session refresh --role <r>`, jamais par un agent via MCP. */
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+      use: { ...devices['Desktop Chrome'] },
+    },
+
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },

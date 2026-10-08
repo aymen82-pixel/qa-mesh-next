@@ -71,6 +71,17 @@ $env:QA_DEFAULT_PASSWORD = "motdepasse"
 
 Utilisez les mêmes noms que dans `qa.config.json`. Les secrets ne sont jamais écrits sur disque.
 
+Puis créez la session du rôle (connexion faite par du code Playwright, jamais
+par un agent : le mot de passe ne passe pas par le modèle) :
+
+```bash
+node kernel/dist/cli.js session refresh --role default
+```
+
+Si la connexion échoue, adaptez les libellés de `pages/login.page.ts` à votre
+écran de connexion. Clés d'API et autres secrets : déclarez leur **nom** dans
+`qa.config.json#secrets` ; détails dans [docs/security.md](docs/security.md).
+
 ### Étape 4 — (Optionnel) Indiquer les zones à risque
 
 Pour que la plateforme teste en priorité ce qui compte, ajoutez dans

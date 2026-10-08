@@ -19,8 +19,9 @@ export class LoginPage {
     this.errorMessage = page.getByRole('alert');
   }
 
-  async goto() {
-    await this.page.goto('/login');
+  /** `path` = `qa.config.json#auth.login_url` (relatif à baseURL). */
+  async goto(path = '/login') {
+    await this.page.goto(path);
   }
 
   async login(username: string, password: string) {

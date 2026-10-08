@@ -8,6 +8,8 @@ import {
   type TypedRequestOptions,
   type TypedResponse,
 } from '../utils/api-client';
+import { SecretVault } from '../utils/secrets';
+import type { SecretRef } from '../kernel/src/secrets/redact';
 
 /**
  * Fixtures POM + API du projet.
@@ -35,7 +37,24 @@ type ApiFixtures = {
   apiRequest: ApiRequest;
 };
 
-export const test = base.extend<PageObjects & ApiFixtures>({
+/**
+ * Secrets (C7) : `secrets.fill(locator, 'nom')` remplit et masque un champ,
+ * `secrets.screenshot(page)` capture avec `mask`, `secrets.redactor()` masque
+ * un texte. Jamais de valeur dans un spec : uniquement des noms déclarés.
+ */
+type SecretFixtures = {
+  /** Registre surchargeable (`test.use`) ; par défaut `qa.config.json`. */
+  secretRegistry: SecretRef[] | undefined;
+  secrets: SecretVault;
+};
+
+export const test = base.extend<PageObjects & ApiFixtures & SecretFixtures>({
+  secretRegistry: [undefined, { option: true }],
+
+  secrets: async ({ secretRegistry }, use) => {
+    await use(new SecretVault(secretRegistry));
+  },
+
   loginPage: async ({ page }, use) => {
     await use(new LoginPage(page));
   },

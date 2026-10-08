@@ -211,6 +211,18 @@ déterministes (`src/errors/classify.ts`) testées sur des messages réels de
 Playwright (`src/errors/fixtures/`). `errors check` tourne aussi dans
 `npm --prefix kernel test`. Détail : `docs/errors.md`.
 
+### `secrets` / `redact` / `session refresh` — secrets (C7)
+
+```bash
+node kernel/dist/cli.js secrets list [--json]          # noms, variables, présence — jamais de valeur
+node kernel/dist/cli.js redact <fichier|-> [--in-place] # <secret:nom> partout (texte ou JSON)
+node kernel/dist/cli.js session refresh --role <r>      # connexion déterministe -> AgentDB
+```
+
+Registre : `qa.config.json#secrets` + `<rôle>.password`. Moteur pur partagé
+avec les tests : `src/secrets/redact.ts`. Le journal (`pipeline.log` et SQLite)
+est redacté à l'écriture. Détail et limites : `docs/security.md`.
+
 ### `config check` — conformité de `.qa/qa.config.json`
 
 ```bash
@@ -277,6 +289,10 @@ Le kernel est ainsi invocable depuis n'importe quel emplacement du projet.
 | `src/errors/check.ts` | Vérification de cohérence de la taxonomie |
 | `src/commands/classify.ts` | Commande `classify` (rapport JSON Playwright) |
 | `src/commands/errors.ts` | Commandes `errors list/check` |
+| `src/secrets/redact.ts` | Redaction pure (partagée avec utils/secrets.ts) |
+| `src/secrets/project.ts` | Redacteur du projet (config + environnement) |
+| `src/commands/secrets.ts` | Commandes `secrets list` et `redact` |
+| `src/commands/session.ts` | Commande `session refresh` (setup Playwright déterministe) |
 | `src/commands/config.ts` | Commande `config check` (contrat `qa-config`) |
 | `src/commands/plugin.ts` | Commande `plugin build` (génération + `--check` anti-dérive) |
 | `src/paths.ts` | Résolution portable de `.qa` |

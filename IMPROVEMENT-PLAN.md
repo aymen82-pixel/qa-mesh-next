@@ -300,4 +300,5 @@ Replay cache, modèles de décision, moteur mobile, OAuth et abonnements, télé
 
 - Q2 : nouveau dépôt GitHub `aymen82-pixel/qa-mesh-next` (à créer côté GitHub, voir point C1).
 - Sans réponse explicite, les recommandations du plan s'appliquent : ordre proposé, plugin généré **et** commité (`plugin build --check`), `simple-input-form.spec.ts` et `seed.spec.ts` racine supprimés (`examples/` conservés comme documentation), C1 en un seul commit.
-- Restent ouvertes jusqu'au chantier concerné : `playwright.config.ts` (C6/C7), Agent 0 (C7), `ASSERTION_FAILED` (C5), démo (C4), licence (C12).
+- C5 : `ASSERTION_FAILED` = PRODUIT requalifiable avec motif. C7 (validé) : projet `setup` dans `playwright.config.ts`, Agent 0 sans connexion MCP.
+- Restent ouvertes : `trace` dans `playwright.config.ts` (C6), démo (C4), licence (C12).

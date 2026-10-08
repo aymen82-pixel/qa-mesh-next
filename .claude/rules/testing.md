@@ -11,8 +11,15 @@
   `waitForCreation()` de `utils/api-client.ts`), pas par scraping de tableau ;
   suffixer les données `TestE2E-{Date.now()}`.
 - Authentification : storageState réutilisé (`.qa/agentdb/sessions/`),
-  jamais de login UI répété par test. Tests du login lui-même :
+  jamais de login UI répété par test. La session se crée par
+  `qa-mesh session refresh --role <r>` (`tests/auth.setup.ts`), jamais par un
+  agent via MCP. Tests du login lui-même :
   `test.use({ storageState: { cookies: [], origins: [] } })`.
+- Secrets : uniquement par leur NOM (`qa.config.json#secrets`, ou
+  `<rôle>.password`) via la fixture `secrets` : `secrets.fill(locator, 'nom')`
+  (remplit et masque), `secrets.screenshot(page)` (capture avec `mask`). Jamais
+  de valeur, de JWT, de `Bearer …` ni de clé `sk-…` dans un fichier (bloqué
+  par `qa-guard`).
 - Couverture minimale par fonctionnalité : 1 nominal + 1 erreur.
 - Tests flaky : diagnostiquer (taxonomie du skill `playwright-best-practices`,
   `references/flaky-tests.md`) ; quarantaine `test.fixme()` + raison + ticket,

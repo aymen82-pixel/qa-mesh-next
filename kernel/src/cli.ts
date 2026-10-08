@@ -17,6 +17,7 @@ import { runTraceRender } from "./commands/trace";
 import { runGuide } from "./commands/guide";
 import { EXPLORE_MODES, runExplore, type ExploreMode } from "./commands/explore";
 import { runBugbash } from "./commands/bugbash";
+import { runUsage } from "./commands/usage";
 
 const VERSION = "2.0.0-alpha.1";
 
@@ -89,6 +90,9 @@ Usage :
   qa-mesh bugbash report|status --run <id>
       Bug bash avec preuve : fusion des findings, test de repro jugé par le kernel,
       bugs_report.json (confirmés seulement) + unconfirmed.json.
+
+  qa-mesh usage [--run <id>] [--session <id>] [--top N] [--json]
+      Observabilité des agents (hook qa-events.js) : appels d'outils, durée, tokens par agent. Lecture seule.
 
   qa-mesh guide [skill[/topic] | topic] [--json]
       Documentation à la demande : liste des skills, routeur SKILL.md, ou une référence.
@@ -359,6 +363,11 @@ function main(argv: string[]): number {
           return 2;
         }
         const outcome = runBugbash({ mode: mode as "merge" | "verify" | "report" | "status", flags: args.flags, bools: args.bools, positionals: args.positionals.slice(1), qaDir });
+        process.stdout.write(outcome.stdout + "\n");
+        return outcome.exitCode;
+      }
+      case "usage": {
+        const outcome = runUsage({ run: first(args, "run"), session: first(args, "session"), top: first(args, "top") ? Number(first(args, "top")) : undefined, json: args.bools.has("json"), qaDir });
         process.stdout.write(outcome.stdout + "\n");
         return outcome.exitCode;
       }

@@ -26,8 +26,23 @@
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "node .claude/hooks/qa-guard.js" },
-          { "type": "command", "command": "node .claude/hooks/loop-guard.js" }
+          {
+            "type": "command",
+            "command": "node .claude/hooks/qa-guard.js"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/loop-guard.js"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/qa-events.js"
+          }
         ]
       }
     ],
@@ -35,7 +50,40 @@
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "node .claude/hooks/qa-typecheck.js", "timeout": 120 }
+          {
+            "type": "command",
+            "command": "node .claude/hooks/qa-typecheck.js",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/qa-events.js"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/qa-events.js"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/qa-events.js"
+          }
         ]
       }
     ]

@@ -1,0 +1,6 @@
+169 événement(s), 1 session(s) · run 2026-10-08-014
+
+agent                     appels  erreurs  outils(s)  tokens in/out (cache lu)   outils principaux
+qa-explorer                   58        0       64.5  86/3.3k (1247.2k)          browser_click×25, browser_type×15, browser_navigate×8, planner_setup_page×3, Bash×3
+qa-bug-verifier               14        0       76.0  24/2.1k (259.9k)           Bash×6, browser_navigate×3, planner_setup_page×2, browser_type×2, browser_click×1
+principal                     11        0      306.8  96/21.9k (2987.7k)         Bash×6, Agent×5

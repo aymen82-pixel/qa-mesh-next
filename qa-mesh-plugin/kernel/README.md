@@ -248,6 +248,16 @@ node kernel/dist/cli.js bugbash report --run <id>                     # bugs_rep
   refusées ; un compte jetable `bb-<slug>` par charter quand l'app en déclare.
 - Contrats `agent-bugverify`, `bugbash-bugs`, `bugbash-unconfirmed`.
 
+### `usage` — observabilité des agents (C10)
+
+```bash
+node kernel/dist/cli.js usage [--run <id>] [--session <id>] [--top N] [--json]
+```
+
+Lit `.qa/events/*.jsonl` (hook `qa-events.js`, sans contenu d'outil) et les
+transcripts Claude Code : appels, erreurs, durée des outils et tokens par agent.
+Lecture seule, sortie bornée. Détail : `docs/observability.md`.
+
 ### `guide` — documentation à la demande (C2)
 
 ```bash
@@ -357,6 +367,8 @@ Le kernel est ainsi invocable depuis n'importe quel emplacement du projet.
 | `src/bugbash/verdict.ts` | Verdict pur d'un test de repro |
 | `src/bugbash/store.ts` | Verdicts de vérification (SQLite) |
 | `src/commands/bugbash.ts` | Commandes `findings merge`, `bugbash verify/report/status` |
+| `src/usage/aggregate.ts` | Agrégation pure des événements et des tokens |
+| `src/commands/usage.ts` | Commande `usage` |
 | `src/commands/guide.ts` | Commande `guide` (progressive disclosure) |
 | `src/trace/zip.ts` | Lecteur ZIP minimal (trace.zip) |
 | `src/trace/parse.ts` | Extraction pure des faits d'un trace Playwright |
